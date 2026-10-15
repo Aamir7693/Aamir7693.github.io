@@ -165,7 +165,7 @@
     <label>One-line description <small>(shown on the card)</small></label><input type="text" id="j-desc">
     <div class="row">
       <div><label>Order <small>(1 = first)</small></label><input type="number" id="j-imp" value="1" min="1"></div>
-      <div><label>Figure <small>(PNG/JPG — used as the card image and shown on the project page)</small></label><input type="file" id="j-file" accept="image/png,image/jpeg,image/webp"></div>
+      <div><label>Figure <small>(optional — PNG/JPG; becomes the card image and is shown on the page)</small></label><input type="file" id="j-file" accept="image/png,image/jpeg,image/webp"></div>
     </div>
     <div class="row">
       <div><label>Figure caption <small>(optional)</small></label><input type="text" id="j-cap"></div>
@@ -198,7 +198,7 @@
       <div><label>Homepage URL</label><input type="url" id="e-url"></div>
       <div><label>Photo URL <small>(optional — or upload below)</small></label><input type="url" id="e-img"></div>
     </div>
-    <label>Upload photo <small>(JPG or PNG, square works best; stored under assets/img/people/)</small></label>
+    <label>Upload photo <small>(optional — JPG or PNG, square works best)</small></label>
     <input type="file" id="e-file" accept="image/jpeg,image/png">
     <label>Note <small>(optional, e.g. "Collaborated on X")</small></label><input type="text" id="e-note">
     <div class="actions"><button class="primary" data-submit="person">Add person</button></div>
@@ -237,7 +237,7 @@
     <label>Highlights <small>— one per line, shown on the CV page and when the timeline row is expanded</small></label>
     <textarea id="x-high" placeholder="Built …&#10;Published …&#10;(pasting bullets from your CV works too)"></textarea>
     <div class="row">
-      <div><label>Logo <small>(PNG/JPG/SVG — stored under assets/img/logos/)</small></label><input type="file" id="x-logo" accept="image/png,image/jpeg,image/svg+xml"></div>
+      <div><label>Logo <small>(optional — PNG/JPG/SVG)</small></label><input type="file" id="x-logo" accept="image/png,image/jpeg,image/svg+xml"></div>
       <div><label>…or logo URL</label><input type="url" id="x-logo-url"></div>
     </div>
     <div class="actions"><button class="primary" data-submit="experience">Add to CV</button></div>
@@ -331,14 +331,17 @@
     <div id="m-editor" style="display:none; margin-top:1rem">
       <label id="m-what">Editing</label>
       <textarea class="code" id="m-text" spellcheck="false"></textarea>
-      <div class="row">
-        <div><label>Attach an image <small id="m-img-hint">(uploads the file and fills the right field below)</small></label><input type="file" id="m-img" accept="image/png,image/jpeg,image/svg+xml,image/webp"></div>
-        <div><label>&nbsp;</label><button class="secondary" id="m-img-up" style="margin-top:0">Upload &amp; insert</button></div>
-      </div>
       <div class="actions">
         <button class="primary" id="m-save">Save changes</button>
         <button class="secondary" id="m-cancel">Cancel</button>
       </div>
+      <details style="margin-top:.6rem">
+        <summary>Attach an image (optional)</summary>
+        <div class="row">
+          <div><label>Image file <small id="m-img-hint">(uploads it and fills the matching field in the text above — then click Save changes)</small></label><input type="file" id="m-img" accept="image/png,image/jpeg,image/svg+xml,image/webp"></div>
+          <div><label>&nbsp;</label><button class="secondary" id="m-img-up" style="margin-top:0">Upload &amp; insert</button></div>
+        </div>
+      </details>
     </div>
     <div class="msg" id="m-msg"></div>
   </section>
