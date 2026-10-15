@@ -1,0 +1,14 @@
+# Social / contact links shown at the bottom of the about page (and in search).
+# Icons appear in the order listed here. Delete any line you don't want shown.
+# Full list of supported keys: https://github.com/george-gca/jekyll-socials
+# email: your-umbc-email@umbc.edu   # <- uncomment and fill in to show an email icon
+cv_pdf: /assets/pdf/cv.pdf
+scholar_userid: PrdrK1sAAAAJ
+github_username: Aamir7693
+linkedin_username: aamir-hamid-99b41317b
+# orcid_id: 0000-0000-0000-0000
+# x_username:
+# bluesky_url: https://bsky.app/profile/you.bsky.social
+# semanticscholar_id:
+# dblp_url:
+rss_icon: false

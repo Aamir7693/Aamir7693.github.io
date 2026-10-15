@@ -1,0 +1,72 @@
+# Rendered on the /cv/ page (the PDF download button points at assets/pdf/cv.pdf).
+# Keep this short — it is a summary; the PDF is the full CV.
+# Sections render in the order listed. Delete any section you don't need.
+cv:
+  name: Aamir Hamid
+  label: PhD Student in Computer Science, UMBC
+  email: ""
+  location: Baltimore, MD
+  image: ""
+  summary: >-
+    One or two sentences on your research focus — replace me. Advised by Prof. Roberto Yus at UMBC.
+
+  social_networks:
+    - network: GitHub
+      username: Aamir7693
+    - network: LinkedIn
+      username: aamir-hamid-99b41317b
+
+  sections:
+    Education:
+      - institution: University of Maryland, Baltimore County (UMBC)
+        location: Baltimore, MD
+        url: https://www.csee.umbc.edu/
+        area: Computer Science
+        studyType: PhD
+        start_date: "20XX" # <- your start year
+        end_date: present
+        highlights:
+          - "Advisor: Prof. Roberto Yus"
+
+      - institution: Your Previous University
+        location: City, Country
+        area: Computer Science
+        studyType: BSc
+        start_date: 2019
+        end_date: 2023
+
+    Research Experience:
+      - company: Prof. Roberto Yus's group, UMBC
+        position: Graduate Research Assistant
+        location: Baltimore, MD
+        start_date: "20XX" # <- your start year
+        end_date: present
+        highlights:
+          - One-line description of a project and its outcome.
+          - Another one-line description.
+
+      - company: Company or Lab
+        position: Research Intern
+        location: City, State
+        start_date: 2023-06
+        end_date: 2023-08
+        highlights:
+          - What you built or found, in one line.
+
+    Awards:
+      - title: Example Fellowship or Award
+        date: 2025
+        awarder: Awarding body
+        summary: One line on what it recognises.
+
+    Skills:
+      - name: Programming
+        icon: fa-solid fa-code
+        keywords: "Python, PyTorch, C++, SQL"
+      - name: Research
+        icon: fa-solid fa-flask
+        keywords: "Machine learning, experimental design, scientific writing"
+
+    Languages:
+      - name: English
+        summary: "Fluent"

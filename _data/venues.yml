@@ -1,0 +1,17 @@
+# Optional: gives the `abbr = {...}` tag on a bib entry a link and a colour.
+# Keys must match the abbr values used in _bibliography/papers.bib.
+"NeurIPS":
+  url: https://neurips.cc/
+  color: "#6b3fa0"
+
+"ICML":
+  url: https://icml.cc/
+  color: "#1f77b4"
+
+"ICLR":
+  url: https://iclr.cc/
+  color: "#2ca02c"
+
+"arXiv":
+  url: https://arxiv.org/
+  color: "#b31b1b"

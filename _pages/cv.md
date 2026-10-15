@@ -1,0 +1,12 @@
+---
+layout: cv
+permalink: /cv/
+title: CV
+nav: true
+nav_order: 4
+cv_pdf: /assets/pdf/cv.pdf # you can also use external links here
+cv_format: rendercv # the page is rendered from _data/cv.yml
+description: Download the PDF above, or browse the summary below. Last updated whenever the PDF changes.
+toc:
+  sidebar: left
+---
