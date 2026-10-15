@@ -21,13 +21,13 @@ cv:
     Education:
       - institution: University of Maryland, Baltimore County (UMBC)
         abbr: UMBC # shown on the home-page timeline until a logo is uploaded
-        logo: assets/img/logos/umbc.png # upload the file via the dashboard (Bio & files → upload to a path)
+        logo: "assets/img/logos/university-of-maryland-baltimore-county-umbc.svg"
         location: Baltimore, MD
         url: https://www.csee.umbc.edu/
         area: Computer Science
         studyType: PhD
         summary: "Advised by Prof. Roberto Yus. Research on privacy, data management and generative AI."
-        start_date: "20XX" # <- your start year
+        start_date: "2021"
         end_date: "present"
         highlights:
           - "Advisor: Prof. Roberto Yus"
