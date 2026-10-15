@@ -45,14 +45,10 @@ cv:
         start_date: "2026-05"
         end_date: "2026-08"
         highlights:
-          - "Fine-tuned Gemma-3-1B with LoRA/PEFT and extended the tokenizer with 4,000 domain-specific single-token actions to model"
-          - "ArcGIS Pro user-event (EUEI) sequences for next-action prediction."
-          - "• Designed and trained a compact decoder-only transformer from scratch outperforming the"
-          - "fine-tuned 1B model on top-3 next-action accuracy (0.582 vs. 0.549) at a fraction of the parameters."
-          - "• Deployed models for interactive inference via a Streamlit app with top-K action prediction, and merged the LoRA adapter with the"
-          - "extended vocabulary into a single GGUF for CPU/llama.cpp serving."
-          - "• Mined 163.8M telemetry events across 137K sessions into transition-probability workflow graphs, uncovering high-retention paths,"
-          - "drop-off points, and transition networks over 4,000 application events for large-scale process mining and behavioral analysis."
+          - "Fine-tuned Gemma-3-1B with LoRA/PEFT and extended the tokenizer with 4,000 domain-specific single-token actions to model ArcGIS Pro user-event (EUEI) sequences for next-action prediction."
+          - "Designed and trained a compact decoder-only transformer from scratch, outperforming the fine-tuned 1B model on top-3 next-action accuracy (0.582 vs. 0.549) at a fraction of the parameters."
+          - "Deployed models for interactive inference via a Streamlit app with top-K action prediction, and merged the LoRA adapter with the extended vocabulary into a single GGUF for CPU/llama.cpp serving."
+          - "Mined 163.8M telemetry events across 137K sessions into transition-probability workflow graphs, uncovering high-retention paths, drop-off points, and transition networks over 4,000 application events for large-scale process mining and behavioral analysis."
 
       - company: Prof. Roberto Yus's group, UMBC
         logo: assets/img/logos/umbc.png
