@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://aamir7693.github.io/sitemap.xml
