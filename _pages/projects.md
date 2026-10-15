@@ -2,7 +2,7 @@
 layout: page
 title: projects
 permalink: /projects/
-description: Research projects, with links to papers and code.
+description: Research and industry projects — what the problem was, what I built, what came out of it.
 nav: true
 nav_order: 2
 horizontal: false

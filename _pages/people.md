@@ -2,7 +2,7 @@
 layout: page
 permalink: /people/
 title: people
-description: The people I work with and learn from. Edit <code>_data/people.yml</code> or use the dashboard to add someone.
+description: Advisors, mentors and collaborators I'm lucky to work with.
 nav: true
 nav_order: 5
 ---

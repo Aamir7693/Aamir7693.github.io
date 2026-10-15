@@ -2,7 +2,7 @@
 layout: page
 permalink: /publications/
 title: publications
-description: Peer-reviewed papers and preprints, newest first. Generated from <code>_bibliography/papers.bib</code>.
+description: Peer-reviewed papers and preprints, newest first.
 nav: true
 nav_order: 1
 ---

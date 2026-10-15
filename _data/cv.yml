@@ -43,12 +43,12 @@ cv:
         end_date: "2020"
 
     Experience:
-      - company: "ESRI"
+      - company: "Esri"
         logo: "assets/img/logos/esri.png"
         position: "Data Scientist Intern"
         summary: "Fine-tuned Gemma-3-1B and trained a compact transformer for next-action prediction over ArcGIS Pro telemetry; shipped a Streamlit demo and a llama.cpp build."
         location: "Redlands, California"
-        url: "https://www.esri.com/en-us/home"
+        url: "https://www.esri.com/"
         start_date: "2026-05"
         end_date: "2026-08"
         highlights:
@@ -97,12 +97,6 @@ cv:
         highlights:
           - "Designed GenAIPABench, a benchmark for evaluating generative-AI privacy assistants on policy questions, summaries and citations."
 
-    Awards:
-      - title: Example Fellowship or Award
-        date: 2025
-        awarder: Awarding body
-        summary: One line on what it recognises.
-
     Skills:
       - name: Languages & ML
         icon: fa-solid fa-code
@@ -124,6 +118,3 @@ cv:
       - name: Applied machine learning
         icon: fa-solid fa-chart-line
 
-    Languages:
-      - name: English
-        summary: "Fluent"
