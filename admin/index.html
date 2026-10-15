@@ -229,7 +229,7 @@
       <div><label>End <small>(YYYY, YYYY-MM or "present")</small></label><input type="text" id="x-end" placeholder="present"></div>
     </div>
     <label>Highlights <small>— one per line</small></label>
-    <textarea id="x-high" placeholder="Built …&#10;Published …"></textarea>
+    <textarea id="x-high" placeholder="Built …&#10;Published …&#10;(pasting bullets from your CV works too)"></textarea>
     <div class="row">
       <div><label>Logo <small>(PNG/JPG/SVG — stored under assets/img/logos/)</small></label><input type="file" id="x-logo" accept="image/png,image/jpeg,image/svg+xml"></div>
       <div><label>…or logo URL</label><input type="url" id="x-logo-url"></div>
@@ -392,6 +392,16 @@
   const yq = (v) => JSON.stringify(String(v)); // JSON string == valid double-quoted YAML scalar
   const bib = (v) => String(v).replace(/[{}]/g, ''); // keep braces balanced inside BibTeX fields
   const lines = (s) => String(s).split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  // Highlights: one per line normally; if the text contains bullet markers (pasted from a CV), each marker starts a
+  // new item and unmarked lines are wrapped continuations of the previous one.
+  const bullets = (s) => {
+    const raw = String(s).split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+    const mark = /^[\u2022\u25E6\u25AA\u00B7\-\*]\s*/;
+    if (!raw.some(l => mark.test(l))) return raw;
+    const out = [];
+    for (const l of raw) { if (mark.test(l) || !out.length) out.push(l.replace(mark, '')); else out[out.length - 1] += ' ' + l; }
+    return out.map(x => x.trim()).filter(Boolean);
+  };
   function b64utf8(str) { const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b)); return btoa(bin); }
   function utf8b64(b64) { const bin = atob(b64.replace(/\n/g, '')); const bytes = Uint8Array.from(bin, c => c.charCodeAt(0)); return new TextDecoder().decode(bytes); }
   function fileToB64(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
@@ -504,7 +514,7 @@
     },
     experience: async () => {
       const kind = $('x-kind').value, loc = $('x-loc').value.trim(), site = $('x-url').value.trim();
-      const start = need($('x-start').value, 'Start'), end = $('x-end').value.trim() || 'present', highs = lines($('x-high').value);
+      const start = need($('x-start').value, 'Start'), end = $('x-end').value.trim() || 'present', highs = bullets($('x-high').value);
       const ind = '      ', sub = '        ';
       let block;
       if (kind === 'Experience') {
