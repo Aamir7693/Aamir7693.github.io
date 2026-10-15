@@ -3,7 +3,7 @@ layout: page
 title: Agentic analytics on manufacturing data
 description: An LLM agent and a Snowflake semantic layer that let engineers ask questions of RMA and supply-chain data in plain English. AMD, 2024–2025.
 img:
-importance: 3
+importance: 4
 related_publications: false
 ---
 

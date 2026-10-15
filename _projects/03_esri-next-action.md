@@ -3,7 +3,7 @@ layout: page
 title: Next-action prediction for ArcGIS Pro
 description: Small language models over 163M telemetry events — predicting what an analyst will do next inside a desktop GIS. Esri, summer 2026.
 img:
-importance: 2
+importance: 3
 related_publications: false
 ---
 
