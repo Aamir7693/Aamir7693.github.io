@@ -481,7 +481,7 @@
     add('author', authors.join(' and '));
     if (type === 'inproceedings') add('booktitle', venue); else add('journal', venue);
     add('year', year);
-    add('doi', $('p-doi').value); add('arxiv', $('p-arxiv').value); add('pdf', $('p-pdf').value); add('code', $('p-code').value); add('website', $('p-website').value); add('award', $('p-award').value);
+    add('doi', $('p-doi').value.trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')); add('arxiv', $('p-arxiv').value.trim().replace(/^https?:\/\/arxiv\.org\/(abs|pdf)\//i, '').replace(/(v\d+)?(\.pdf)?$/, '')); add('pdf', $('p-pdf').value); add('code', $('p-code').value); add('website', $('p-website').value); add('award', $('p-award').value);
     if ($('p-selected').checked) add('selected', 'true');
     if ($('p-bib').checked) add('bibtex_show', 'true');
     return `@${type}{${key},\n${f.join('\n')}\n}`;
