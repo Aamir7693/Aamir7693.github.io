@@ -22,15 +22,6 @@ related_publications: true
 
 **Scale and findings.** At the time of writing PrivacyLens had processed more than 1,200 policies covering over 7,300 devices. We used it to compare devices by category and by country of manufacture, classify policies, and measure how data-protection regulation changed company practices {% cite hamid2023privacylens %}.
 
-<div class="row">
-  <div class="col-sm mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/projects/privacylens-overview.png" title="PrivacyLens overview" class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-<div class="caption">
-  The full picture from the paper: the collected corpus feeds a public website with exploration tools for consumers, regulators and policy writers — for example, comparing smart-lock policy updates across years or GDPR's effect on smart-camera policies by country.
-</div>
-
 - **Paper:** [arXiv:2308.05890](https://arxiv.org/abs/2308.05890) (2023)
 - **Code:** [github.com/Aamir7693/privacy-lens](https://github.com/Aamir7693/privacy-lens)
 - **Lab project page:** [DAMS Lab — PrivacyDocs](https://damslabumbc.github.io/project/privacydocs/)
