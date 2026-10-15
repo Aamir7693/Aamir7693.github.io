@@ -51,7 +51,7 @@ cv:
           - "Mined 163.8M telemetry events across 137K sessions into transition-probability workflow graphs, uncovering high-retention paths, drop-off points, and transition networks over 4,000 application events for large-scale process mining and behavioral analysis."
 
       - company: "AMD"
-        logo: "assets/img/logos/amd.png"
+        logo: "assets/img/logos/amd.jpg"
         position: "Data Scientist Intern"
         location: "Austin, Texas"
         url: "https://www.amd.com/"
