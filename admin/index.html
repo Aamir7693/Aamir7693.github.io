@@ -71,6 +71,7 @@
     <button data-tab="experience">Experience</button>
     <button data-tab="teaching">Teaching</button>
     <button data-tab="files">Bio &amp; files</button>
+    <button data-tab="build">Build</button>
   </nav>
 
   <!-- SETUP -->
@@ -289,6 +290,24 @@
     <textarea class="code" id="f-text" spellcheck="false" placeholder="Click Load to fetch the file."></textarea>
     <div class="msg" id="f-msg"></div>
   </section>
+  <!-- BUILD -->
+  <section class="panel" id="tab-build">
+    <h2>Build status</h2>
+    <p class="hint">Every commit from this dashboard starts a build automatically (about 3 minutes). Use this tab to watch it, or to re-run the build without changing anything.</p>
+    <div class="actions">
+      <button class="secondary" id="b-refresh">Refresh status</button>
+      <button class="primary" id="b-run">Rebuild now</button>
+    </div>
+    <div class="msg" id="b-msg"></div>
+    <div id="b-list" style="margin-top:.8rem"></div>
+    <details>
+      <summary>Needs one extra token permission</summary>
+      <ol class="steps">
+        <li>GitHub → Settings → Developer settings → Fine-grained tokens → your "site dashboard" token → <b>Edit</b>.</li>
+        <li>Repository permissions → <b>Actions: Read and write</b> → Save. (Contents stays Read and write.)</li>
+      </ol>
+    </details>
+  </section>
 </main>
 
 <script>
@@ -362,7 +381,7 @@
   async function putFile(path, contentB64, message, sha) {
     const body = { message, content: contentB64, branch: S.branch };
     if (sha) body.sha = sha;
-    const d = await gh(`contents/${encodeURI(path)}`, { method: 'PUT', body: JSON.stringify(body) });
+    const d = await gh(`contents/${encodeURI(path)}`, { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
     return d.commit && d.commit.html_url;
   }
   async function createNew(path, text, message) {
@@ -370,12 +389,14 @@
     if (existing) throw new Error(`A file already exists at ${path}. Change the title/date to get a different file name.`);
     return putFile(path, b64utf8(text), message);
   }
-  async function appendTo(path, extra, message) {
+  async function appendTo(path, extra, message, isDuplicate) {
     const f = await getFile(path);
     if (!f) throw new Error(`${path} not found in the repository.`);
+    if (isDuplicate && isDuplicate(f.text)) throw new Error(`Already in ${path} — nothing added. To change it, open Bio & files, load ${path} and edit it there.`);
     const text = f.text.replace(/\s*$/, '') + '\n\n' + extra.replace(/\s*$/, '') + '\n';
     return putFile(path, b64utf8(text), message, f.sha);
   }
+  const norm = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   function done(id, url, what) {
     msg(id, 'ok', `${esc(what)} committed${url ? ` (<a href="${esc(url)}" target="_blank">view commit</a>)` : ''}. The site rebuilds in about 3 minutes — <a href="${esc($('lnk-actions').href)}" target="_blank">watch the build</a>.`);
   }
@@ -407,7 +428,10 @@
     },
     paper: async () => {
       const entry = buildBib();
-      const url = await appendTo('_bibliography/papers.bib', entry, `Add paper: ${$('p-title').value.trim().slice(0, 70)}`);
+      const key = entry.slice(entry.indexOf('{') + 1, entry.indexOf(','));
+      const title = norm($('p-title').value);
+      const dup = (text) => text.includes(`{${key},`) || [...text.matchAll(/title\s*=\s*\{([^}]*)\}/g)].some(m => norm(m[1]) === title);
+      const url = await appendTo('_bibliography/papers.bib', entry, `Add paper: ${$('p-title').value.trim().slice(0, 70)}`, dup);
       done('p-msg', url, 'Paper');
     },
     project: async () => {
@@ -432,7 +456,7 @@
       const fields = { role, title: $('e-title').value, affiliation: $('e-aff').value, url: $('e-url').value, image, note: $('e-note').value };
       let block = `- name: ${yq(name)}`;
       for (const [k, v] of Object.entries(fields)) if (String(v).trim()) block += `\n  ${k}: ${yq(String(v).trim())}`;
-      const url = await appendTo('_data/people.yml', block, `People: add ${name}`);
+      const url = await appendTo('_data/people.yml', block, `People: add ${name}`, (text) => text.includes(`- name: ${yq(name)}`));
       done('e-msg', url, name); $('e-name').value = '';
     },
     experience: async () => {
@@ -452,6 +476,7 @@
       block.push(`${sub}start_date: ${yq(start)}`, `${sub}end_date: ${yq(end)}`);
       if (highs.length) block.push(`${sub}highlights:`, ...highs.map(h => `${sub}  - ${yq(h)}`));
       const f = await getFile('_data/cv.yml'); if (!f) throw new Error('_data/cv.yml not found.');
+      if (f.text.includes(block[0].trim()) && f.text.includes(block[1].trim())) throw new Error(`That ${kind.toLowerCase()} entry already exists in _data/cv.yml — nothing added. Edit it under Bio & files if needed.`);
       const re = new RegExp(`^(    ${kind}:[ \\t]*\\n)`, 'm');
       if (!re.test(f.text)) throw new Error(`Could not find a "    ${kind}:" section in _data/cv.yml — add it under sections: first.`);
       const text = f.text.replace(re, `$1${block.join('\n')}\n\n`);
@@ -518,6 +543,29 @@
     const f = await getFile(loadedPath); loadedSha = f && f.sha;
     done('f-msg', url, loadedPath);
   }));
+
+  // ---------- build tab ----------
+  const permHint = ' This needs the token to have <b>Actions: Read and write</b> (see the note below the buttons).';
+  async function listRuns() {
+    const d = await gh('actions/runs?per_page=6').catch(e => { throw new Error(e.message + permHint); });
+    const rows = (d.workflow_runs || []).map(r => {
+      const state = r.status === 'completed' ? (r.conclusion === 'success' ? '✅ success' : '❌ ' + (r.conclusion || 'failed')) : '⏳ ' + r.status.replace('_', ' ');
+      const when = new Date(r.created_at).toLocaleString();
+      return `<div style="padding:.4rem 0;border-top:1px solid var(--line);font-size:.9rem">${state} · ${esc(r.display_title || r.name)} · <span style="color:var(--muted)">${esc(when)}</span> · <a href="${esc(r.html_url)}" target="_blank">log ↗</a></div>`;
+    });
+    $('b-list').innerHTML = rows.join('') || '<p class="hint">No builds yet.</p>';
+    const latest = d.workflow_runs && d.workflow_runs[0];
+    if (latest && latest.status !== 'completed') setTimeout(() => { if ($('tab-build').classList.contains('active')) listRuns().catch(() => {}); }, 20000);
+  }
+  $('b-refresh').addEventListener('click', (e) => run('b-msg', e.target, async () => { await listRuns(); $('b-msg').style.display = 'none'; }));
+  $('b-run').addEventListener('click', (e) => run('b-msg', e.target, async () => {
+    try {
+      await gh('actions/workflows/deploy.yml/dispatches', { method: 'POST', body: JSON.stringify({ ref: S.branch }), headers: { 'Content-Type': 'application/json' } });
+    } catch (err) { throw new Error(err.message + permHint); }
+    msg('b-msg', 'ok', 'Build started. It takes about 3 minutes; the list below refreshes on its own.');
+    setTimeout(() => listRuns().catch(() => {}), 4000);
+  }));
+  tabs.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.tab === 'build' && S.token) listRuns().catch(err => msg('b-msg', 'bad', esc(err.message) + permHint)); });
 
   // ---------- init ----------
   loadSettings();
