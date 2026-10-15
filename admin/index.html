@@ -229,6 +229,10 @@
     </div>
     <label>Highlights <small>— one per line</small></label>
     <textarea id="x-high" placeholder="Built …&#10;Published …"></textarea>
+    <div class="row">
+      <div><label>Logo <small>(PNG/JPG/SVG — stored under assets/img/logos/)</small></label><input type="file" id="x-logo" accept="image/png,image/jpeg,image/svg+xml"></div>
+      <div><label>…or logo URL</label><input type="url" id="x-logo-url"></div>
+    </div>
     <div class="actions"><button class="primary" data-submit="experience">Add to CV</button></div>
     <div class="msg" id="x-msg"></div>
   </section>
@@ -266,6 +270,14 @@
     <input type="file" id="f-pic" accept="image/jpeg">
     <div class="actions"><button class="primary" id="f-pic-up">Upload photo</button></div>
     <div class="msg" id="f-pic-msg"></div>
+
+    <label>Upload any file to a path <small>(logos, project images, paper PDFs)</small></label>
+    <div class="row">
+      <div><input type="file" id="f-any"></div>
+      <div><input type="text" id="f-any-path" placeholder="assets/img/logos/umbc.png"></div>
+    </div>
+    <div class="actions"><button class="primary" id="f-any-up">Upload file</button></div>
+    <div class="msg" id="f-any-msg"></div>
 
     <label>Edit a text file</label>
     <div class="row">
@@ -471,6 +483,16 @@
         const inst = need($('x-inst').value, 'Institution'), deg = need($('x-deg').value, 'Degree'), area = $('x-area').value.trim();
         block = [`${ind}- institution: ${yq(inst)}`, `${sub}studyType: ${yq(deg)}`, ...(area ? [`${sub}area: ${yq(area)}`] : [])];
       }
+      let logo = $('x-logo-url').value.trim();
+      const logoFile = $('x-logo').files[0];
+      if (logoFile) {
+        if (logoFile.size > 2 * 1024 * 1024) throw new Error('Logo is larger than 2 MB — please use a smaller image.');
+        const ext = logoFile.type === 'image/png' ? 'png' : logoFile.type === 'image/svg+xml' ? 'svg' : 'jpg';
+        logo = `assets/img/logos/${slug(kind === 'Experience' ? $('x-org').value : $('x-inst').value)}.${ext}`;
+        const existingLogo = await getFile(logo).catch(() => null);
+        await putFile(logo, await fileToB64(logoFile), `CV: logo ${logo}`, existingLogo && existingLogo.sha);
+      }
+      if (logo) block.splice(1, 0, `${sub}logo: ${yq(logo)}`);
       if (loc) block.push(`${sub}location: ${yq(loc)}`);
       if (site) block.push(`${sub}url: ${yq(site)}`);
       block.push(`${sub}start_date: ${yq(start)}`, `${sub}end_date: ${yq(end)}`);
@@ -528,6 +550,11 @@
   }
   $('f-cv-up').addEventListener('click', (e) => upload('f-cv', 'assets/pdf/cv.pdf', 'f-cv-msg', e.target));
   $('f-pic-up').addEventListener('click', (e) => upload('f-pic', 'assets/img/prof_pic.jpg', 'f-pic-msg', e.target));
+  $('f-any-up').addEventListener('click', (e) => {
+    const p = $('f-any-path').value.trim().replace(/^\/+/, '');
+    if (!p || p.includes('..')) { msg('f-any-msg', 'bad', 'Enter a path inside the repo, e.g. assets/img/logos/umbc.png'); return; }
+    upload('f-any', p, 'f-any-msg', e.target);
+  });
 
   let loadedSha = null, loadedPath = null;
   const curPath = () => $('f-path').value === '__custom' ? need($('f-custom').value, 'Path') : $('f-path').value;
