@@ -7,7 +7,7 @@ Every push to `main` rebuilds and redeploys the site automatically (see `.github
 
 | You want to…                     | Edit this                                                  |
 | -------------------------------- | ---------------------------------------------------------- |
-| Change your bio / photo          | `_pages/about.md`, `assets/img/aamir-portrait.jpg`               |
+| Change your bio / photo          | `_pages/about.md`, `assets/img/aamir-headshot.jpg`               |
 | Add or edit a paper              | `_bibliography/papers.bib` (one BibTeX entry per paper)    |
 | Post a news item                 | add a file to `_news/` (copy an existing one)              |
 | Update your CV                   | replace `assets/pdf/cv.pdf`; optionally `_data/cv.yml`     |
