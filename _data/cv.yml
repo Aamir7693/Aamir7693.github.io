@@ -19,6 +19,7 @@ cv:
   sections:
     Education:
       - institution: University of Maryland, Baltimore County (UMBC)
+        logo: assets/img/logos/umbc.png # upload the file via the dashboard (Bio & files → upload to a path)
         location: Baltimore, MD
         url: https://www.csee.umbc.edu/
         area: Computer Science
@@ -37,6 +38,7 @@ cv:
 
     Experience:
       - company: Prof. Roberto Yus's group, UMBC
+        logo: assets/img/logos/umbc.png
         position: Graduate Research Assistant
         location: Baltimore, MD
         start_date: "20XX" # <- your start year
