@@ -165,7 +165,11 @@
     <label>One-line description <small>(shown on the card)</small></label><input type="text" id="j-desc">
     <div class="row">
       <div><label>Order <small>(1 = first)</small></label><input type="number" id="j-imp" value="1" min="1"></div>
-      <div><label>Card image <small>(optional: path under the repo, e.g. assets/img/projects/x.png)</small></label><input type="text" id="j-img"></div>
+      <div><label>Figure <small>(PNG/JPG — used as the card image and shown on the project page)</small></label><input type="file" id="j-file" accept="image/png,image/jpeg,image/webp"></div>
+    </div>
+    <div class="row">
+      <div><label>Figure caption <small>(optional)</small></label><input type="text" id="j-cap"></div>
+      <div><label>…or image path <small>(if the file is already in the repo)</small></label><input type="text" id="j-img" placeholder="assets/img/projects/x.png"></div>
     </div>
     <div class="row">
       <div><label>Paper URL</label><input type="url" id="j-paper"></div>
@@ -413,6 +417,9 @@
   function fileToB64(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
   function need(v, label) { if (!String(v || '').trim()) throw new Error(label + ' is required.'); return String(v).trim(); }
 
+  // al-folio figure block for project pages
+  const figureBlock = (path, caption) => `<div class="row">\n  <div class="col-sm mt-3 mt-md-0">\n    {% include figure.liquid loading="eager" path="${path}" title="${(caption || '').replace(/"/g, "'")}" class="img-fluid rounded z-depth-1" %}\n  </div>\n</div>${caption ? `\n<div class="caption">\n  ${caption}\n</div>` : ''}\n`;
+
   // ---------- GitHub API ----------
   async function gh(path, opts = {}) {
     if (!S.token) throw new Error('Not connected — open the Setup tab and save a token.');
@@ -495,9 +502,19 @@
     },
     project: async () => {
       const title = need($('j-title').value, 'Title'), desc = need($('j-desc').value, 'Description'), imp = parseInt($('j-imp').value || '1', 10) || 1;
-      const img = $('j-img').value.trim(), paper = $('j-paper').value.trim(), code = $('j-code').value.trim(), body = $('j-body').value.trim();
+      let img = $('j-img').value.trim();
+      const paper = $('j-paper').value.trim(), code = $('j-code').value.trim(), body = $('j-body').value.trim(), cap = $('j-cap').value.trim();
+      const fig = $('j-file').files[0];
+      if (fig) {
+        if (fig.size > 5 * 1024 * 1024) throw new Error('Figure is larger than 5 MB — please resize it.');
+        const ext = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' }[fig.type] || 'png';
+        img = `assets/img/projects/${slug(title)}.${ext}`;
+        const existingFig = await getFile(img).catch(() => null);
+        await putFile(img, await fileToB64(fig), `Project figure: ${img}`, existingFig && existingFig.sha);
+      }
+      const figure = img ? figureBlock(img, cap) : '';
       const links = [paper && `- **Paper:** <${paper}>`, code && `- **Code:** <${code}>`].filter(Boolean).join('\n');
-      const fm = ['---', 'layout: page', `title: ${yq(title)}`, `description: ${yq(desc)}`, `img: ${img ? yq(img) : ''}`, `importance: ${imp}`, 'related_publications: false', '---', '', body, '', links, ''].join('\n');
+      const fm = ['---', 'layout: page', `title: ${yq(title)}`, `description: ${yq(desc)}`, `img: ${img ? yq(img) : ''}`, `importance: ${imp}`, 'related_publications: false', '---', '', figure, body, '', links, ''].filter((l, i, a) => !(l === '' && a[i - 1] === '')).join('\n');
       const url = await createNew(`_projects/${String(imp).padStart(2, '0')}_${slug(title)}.md`, fm, `Add project: ${title.slice(0, 60)}`);
       done('j-msg', url, 'Project');
     },
@@ -726,7 +743,7 @@
     experience: { dir: 'assets/img/logos', name: t => firstVal(t, 'company'), apply: (t, p) => setYamlField(t, 'logo', p, '        ') },
     education:  { dir: 'assets/img/logos', name: t => firstVal(t, 'institution'), apply: (t, p) => setYamlField(t, 'logo', p, '        ') },
     people:     { dir: 'assets/img/people', name: t => firstVal(t, 'name'), apply: (t, p) => setYamlField(t, 'image', p, '  ') },
-    projects:   { dir: 'assets/img/projects', name: t => firstVal(t, 'title'), apply: (t, p) => setYamlField(t, 'img', p, '') },
+    projects:   { dir: 'assets/img/projects', name: t => firstVal(t, 'title'), apply: (t, p) => { const cur = firstVal(t, 'img'); const withImg = cur ? t : setYamlField(t, 'img', p, ''); return withImg.includes(p) && cur ? withImg : withImg.replace(/\s*$/, '') + '\n\n' + figureBlock(p, ''); } },
     papers:     { dir: 'assets/img/publication_preview', name: t => (t.match(/^@\w+\{([^,]+),/) || [])[1], apply: (t, p) => setBibField(t, 'preview', p.split('/').pop()) },
     news:       { dir: 'assets/img/news', name: () => 'news-' + Date.now(), apply: (t, p) => t.replace(/\s*$/, '') + `\n\n![](/${p})\n` },
     teaching:   { dir: 'assets/img/teaching', name: t => firstVal(t, 'title'), apply: (t, p) => t.replace(/\s*$/, '') + `\n\n![](/${p})\n` },
