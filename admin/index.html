@@ -325,6 +325,10 @@
     <div id="m-editor" style="display:none; margin-top:1rem">
       <label id="m-what">Editing</label>
       <textarea class="code" id="m-text" spellcheck="false"></textarea>
+      <div class="row">
+        <div><label>Attach an image <small id="m-img-hint">(uploads the file and fills the right field below)</small></label><input type="file" id="m-img" accept="image/png,image/jpeg,image/svg+xml,image/webp"></div>
+        <div><label>&nbsp;</label><button class="secondary" id="m-img-up" style="margin-top:0">Upload &amp; insert</button></div>
+      </div>
       <div class="actions">
         <button class="primary" id="m-save">Save changes</button>
         <button class="secondary" id="m-cancel">Cancel</button>
@@ -709,6 +713,45 @@
     done('m-msg', url, `"${it.label}"`); await loadItems();
   }));
   $('m-cancel').addEventListener('click', () => { $('m-editor').style.display = 'none'; mEditing = null; });
+
+  // Attach an image to the item being edited: upload it to the folder for this kind, then set the matching field.
+  const imgPlan = {
+    experience: { dir: 'assets/img/logos', name: t => firstVal(t, 'company'), apply: (t, p) => setYamlField(t, 'logo', p, '        ') },
+    education:  { dir: 'assets/img/logos', name: t => firstVal(t, 'institution'), apply: (t, p) => setYamlField(t, 'logo', p, '        ') },
+    people:     { dir: 'assets/img/people', name: t => firstVal(t, 'name'), apply: (t, p) => setYamlField(t, 'image', p, '  ') },
+    projects:   { dir: 'assets/img/projects', name: t => firstVal(t, 'title'), apply: (t, p) => setYamlField(t, 'img', p, '') },
+    papers:     { dir: 'assets/img/publication_preview', name: t => (t.match(/^@\w+\{([^,]+),/) || [])[1], apply: (t, p) => setBibField(t, 'preview', p.split('/').pop()) },
+    news:       { dir: 'assets/img/news', name: () => 'news-' + Date.now(), apply: (t, p) => t.replace(/\s*$/, '') + `\n\n![](/${p})\n` },
+    teaching:   { dir: 'assets/img/teaching', name: t => firstVal(t, 'title'), apply: (t, p) => t.replace(/\s*$/, '') + `\n\n![](/${p})\n` },
+  };
+  function setYamlField(text, key, value, indent) {
+    const line = `${indent}${key}: ${yq(value)}`;
+    const re = new RegExp(`^${indent}${key}:.*$`, 'm');
+    if (re.test(text)) return text.replace(re, line);
+    const lines = text.split('\n');
+    if (/^---\s*$/.test(lines[0])) { lines.splice(1, 0, line); return lines.join('\n'); } // front matter: after opening ---
+    lines.splice(1, 0, line); return lines.join('\n'); // YAML block: after the "- first:" line
+  }
+  function setBibField(text, key, value) {
+    const re = new RegExp(`^\\s*${key}\\s*=\\s*\\{[^}]*\\},?\\s*$`, 'm');
+    const line = `  ${key.padEnd(11)} = {${value}},`;
+    if (re.test(text)) return text.replace(re, line);
+    const i = text.lastIndexOf('}');
+    return text.slice(0, i).replace(/\s*$/, '') + '\n' + line + '\n}' + text.slice(i + 1);
+  }
+  $('m-img-up').addEventListener('click', (e) => run('m-msg', e.target, async () => {
+    if (!mEditing) throw new Error('Open an item with Edit first.');
+    const file = $('m-img').files[0]; if (!file) throw new Error('Choose an image first.');
+    if (file.size > 5 * 1024 * 1024) throw new Error('Image is larger than 5 MB — please resize it.');
+    const plan = imgPlan[$('m-kind').value];
+    const ext = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/svg+xml': 'svg', 'image/webp': 'webp' }[file.type] || 'png';
+    const path = `${plan.dir}/${slug(plan.name($('m-text').value) || mEditing.label)}.${ext}`;
+    const existing = await getFile(path).catch(() => null);
+    const url = await putFile(path, await fileToB64(file), `Image: ${path}`, existing && existing.sha);
+    $('m-text').value = plan.apply($('m-text').value, path);
+    $('m-img').value = '';
+    msg('m-msg', 'ok', `Uploaded ${esc(path)}${url ? ` (<a href="${esc(url)}" target="_blank">commit</a>)` : ''} and filled it in above. Click <b>Save changes</b> to apply it to the item.`);
+  }));
 
   // ---------- build tab ----------
   const permHint = ' This needs the token to have <b>Actions: Read and write</b> (see the note below the buttons).';
