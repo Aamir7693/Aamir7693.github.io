@@ -1,0 +1,10 @@
+# People shown on the /people/ page, grouped by role.
+# role must be one of: Advisor, Mentor, Collaborator, Student
+# image is optional: a path under assets/img/ (e.g. assets/img/people/jane.jpg) or a full URL.
+# The /admin/ dashboard appends entries here for you.
+
+- name: Roberto Yus
+  role: Advisor
+  title: Assistant Professor of Computer Science
+  affiliation: University of Maryland, Baltimore County
+  url: https://umbc.edu/academics/faculty/roberto-yus/

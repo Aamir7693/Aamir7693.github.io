@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Site dashboard</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1b1f24; --muted:#5b6470; --line:#d9dee5; --accent:#2a63d4; --ok:#1d7a3d; --bad:#b4232c; --warn:#8a5a00; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1216; --card:#171b21; --text:#e6e9ee; --muted:#9aa4b1; --line:#2b323c; --accent:#6ea0ff; --ok:#5fc87f; --bad:#ff7b84; --warn:#f0b64a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--text); }
+  header { display:flex; flex-wrap:wrap; gap:.6rem 1rem; align-items:center; padding:.9rem 1rem; border-bottom:1px solid var(--line); background:var(--card); }
+  header h1 { font-size:1.05rem; margin:0; }
+  header .spacer { flex:1; }
+  header a { color:var(--accent); text-decoration:none; font-size:.9rem; }
+  #conn { font-size:.85rem; color:var(--muted); }
+  #conn.ok { color:var(--ok); } #conn.bad { color:var(--bad); }
+  main { max-width: 860px; margin: 0 auto; padding: 1rem; }
+  nav.tabs { display:flex; flex-wrap:wrap; gap:.35rem; margin:.25rem 0 1rem; }
+  nav.tabs button { border:1px solid var(--line); background:var(--card); color:var(--text); padding:.4rem .75rem; border-radius:999px; cursor:pointer; font-size:.9rem; }
+  nav.tabs button.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  section.panel { display:none; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.1rem; }
+  section.panel.active { display:block; }
+  section.panel h2 { margin:0 0 .25rem; font-size:1.15rem; }
+  .hint { color:var(--muted); font-size:.9rem; margin:0 0 1rem; }
+  label { display:block; font-size:.85rem; font-weight:600; margin:.7rem 0 .25rem; }
+  label small { font-weight:400; color:var(--muted); }
+  input[type=text], input[type=url], input[type=date], input[type=number], input[type=password], select, textarea {
+    width:100%; padding:.5rem .6rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
+  textarea { min-height: 6rem; resize: vertical; }
+  textarea.code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.85rem; min-height: 14rem; }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+  .check { display:flex; align-items:center; gap:.5rem; margin-top:.8rem; font-weight:500; font-size:.9rem; }
+  .check input { width:auto; }
+  .actions { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-top:1.1rem; }
+  button.primary { background:var(--accent); color:#fff; border:0; padding:.55rem 1rem; border-radius:8px; font:inherit; font-weight:600; cursor:pointer; }
+  button.secondary { background:transparent; color:var(--text); border:1px solid var(--line); padding:.5rem .9rem; border-radius:8px; font:inherit; cursor:pointer; }
+  button:disabled { opacity:.55; cursor:default; }
+  .msg { margin-top:.9rem; padding:.6rem .8rem; border-radius:8px; font-size:.9rem; display:none; white-space:pre-wrap; }
+  .msg.ok { display:block; background:rgba(29,122,61,.12); color:var(--ok); }
+  .msg.bad { display:block; background:rgba(180,35,44,.12); color:var(--bad); }
+  .msg.info { display:block; background:rgba(42,99,212,.10); color:var(--text); }
+  .msg a { color:inherit; }
+  pre.preview { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:.7rem; font-size:.8rem; overflow:auto; margin:.6rem 0 0; }
+  details { margin-top:.8rem; } summary { cursor:pointer; color:var(--muted); font-size:.9rem; }
+  ol.steps { padding-left:1.2rem; color:var(--muted); font-size:.9rem; }
+  ol.steps li { margin:.2rem 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Site dashboard</h1>
+  <span id="conn">not connected</span>
+  <span class="spacer"></span>
+  <a id="lnk-site" href="/" target="_blank">open site ↗</a>
+  <a id="lnk-actions" href="#" target="_blank">build status ↗</a>
+  <a id="lnk-repo" href="#" target="_blank">repo ↗</a>
+</header>
+
+<main>
+  <nav class="tabs" id="tabs">
+    <button data-tab="setup">Setup</button>
+    <button data-tab="news">News</button>
+    <button data-tab="paper">Paper</button>
+    <button data-tab="project">Project</button>
+    <button data-tab="person">Person</button>
+    <button data-tab="experience">Experience</button>
+    <button data-tab="teaching">Teaching</button>
+    <button data-tab="files">Bio &amp; files</button>
+  </nav>
+
+  <!-- SETUP -->
+  <section class="panel" id="tab-setup">
+    <h2>Connect to your repository</h2>
+    <p class="hint">Everything you add here is committed to the site repository through GitHub's API. The token is stored only in this browser.</p>
+    <div class="row">
+      <div><label>GitHub user / org</label><input type="text" id="s-owner" placeholder="Aamir7693"></div>
+      <div><label>Repository</label><input type="text" id="s-repo" placeholder="Aamir7693.github.io"></div>
+    </div>
+    <label>Fine-grained personal access token <small>— Contents: read &amp; write, this repository only</small></label>
+    <input type="password" id="s-token" placeholder="github_pat_…" autocomplete="off">
+    <details>
+      <summary>How to create the token (2 minutes)</summary>
+      <ol class="steps">
+        <li>GitHub → your avatar → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+        <li>Name it "site dashboard". Expiration: up to 1 year. Repository access: <b>Only select repositories</b> → pick the site repo.</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>. Everything else stays "No access".</li>
+        <li>Generate, copy the token (starts with <code>github_pat_</code>), paste it above, click <b>Test &amp; save</b>.</li>
+      </ol>
+    </details>
+    <div class="actions">
+      <button class="primary" id="s-save">Test &amp; save</button>
+      <button class="secondary" id="s-forget">Forget token</button>
+    </div>
+    <div class="msg" id="s-msg"></div>
+  </section>
+
+  <!-- NEWS -->
+  <section class="panel" id="tab-news">
+    <h2>Post a news item</h2>
+    <p class="hint">Shows in the news box on the home page and on /news/. Keep it to one or two lines.</p>
+    <div class="row">
+      <div><label>Date</label><input type="date" id="n-date"></div>
+      <div><label>Title <small>(optional — makes it a longer post with its own page)</small></label><input type="text" id="n-title" placeholder=""></div>
+    </div>
+    <label>Text <small>(Markdown ok — links like [text](url))</small></label>
+    <textarea id="n-text" placeholder="Our paper on … was accepted at …!"></textarea>
+    <div class="actions"><button class="primary" data-submit="news">Publish</button></div>
+    <div class="msg" id="n-msg"></div>
+  </section>
+
+  <!-- PAPER -->
+  <section class="panel" id="tab-paper">
+    <h2>Add a paper</h2>
+    <p class="hint">Appends a BibTeX entry to <code>_bibliography/papers.bib</code>. The publications page regenerates on the next build.</p>
+    <div class="row">
+      <div><label>Type</label>
+        <select id="p-type">
+          <option value="inproceedings">Conference / workshop paper</option>
+          <option value="article">Journal article</option>
+          <option value="misc">Preprint (arXiv) / other</option>
+        </select></div>
+      <div><label>Year</label><input type="number" id="p-year" min="1990" max="2100"></div>
+    </div>
+    <label>Title</label><input type="text" id="p-title">
+    <label>Authors <small>— one per line, as "First Last"</small></label>
+    <textarea id="p-authors" placeholder="Aamir Hamid&#10;Roberto Yus"></textarea>
+    <div class="row">
+      <div><label>Venue <small>(conference / journal name, or "arXiv preprint")</small></label><input type="text" id="p-venue" placeholder="Proceedings of the VLDB Endowment"></div>
+      <div><label>Short venue badge <small>(abbr, e.g. VLDB)</small></label><input type="text" id="p-abbr"></div>
+    </div>
+    <div class="row">
+      <div><label>arXiv ID <small>(e.g. 2401.01234)</small></label><input type="text" id="p-arxiv"></div>
+      <div><label>DOI</label><input type="text" id="p-doi"></div>
+    </div>
+    <div class="row">
+      <div><label>PDF URL</label><input type="url" id="p-pdf"></div>
+      <div><label>Code URL</label><input type="url" id="p-code"></div>
+    </div>
+    <div class="row">
+      <div><label>Project website URL</label><input type="url" id="p-website"></div>
+      <div><label>Award / note <small>(e.g. Oral, Best paper)</small></label><input type="text" id="p-award"></div>
+    </div>
+    <label class="check"><input type="checkbox" id="p-selected" checked> Show on home page (selected)</label>
+    <label class="check"><input type="checkbox" id="p-bib" checked> Show BIB button</label>
+    <div class="actions">
+      <button class="secondary" id="p-preview">Preview BibTeX</button>
+      <button class="primary" data-submit="paper">Add paper</button>
+    </div>
+    <pre class="preview" id="p-pre" style="display:none"></pre>
+    <div class="msg" id="p-msg"></div>
+  </section>
+
+  <!-- PROJECT -->
+  <section class="panel" id="tab-project">
+    <h2>Add a project</h2>
+    <p class="hint">Creates a card on /projects/ with its own page.</p>
+    <label>Title</label><input type="text" id="j-title">
+    <label>One-line description <small>(shown on the card)</small></label><input type="text" id="j-desc">
+    <div class="row">
+      <div><label>Order <small>(1 = first)</small></label><input type="number" id="j-imp" value="1" min="1"></div>
+      <div><label>Card image <small>(optional: path under the repo, e.g. assets/img/projects/x.png)</small></label><input type="text" id="j-img"></div>
+    </div>
+    <div class="row">
+      <div><label>Paper URL</label><input type="url" id="j-paper"></div>
+      <div><label>Code URL</label><input type="url" id="j-code"></div>
+    </div>
+    <label>Description <small>(Markdown)</small></label>
+    <textarea id="j-body" placeholder="What problem, what you did, what came out of it."></textarea>
+    <div class="actions"><button class="primary" data-submit="project">Add project</button></div>
+    <div class="msg" id="j-msg"></div>
+  </section>
+
+  <!-- PERSON -->
+  <section class="panel" id="tab-person">
+    <h2>Add a person</h2>
+    <p class="hint">Appears on /people/ under the chosen role.</p>
+    <div class="row">
+      <div><label>Name</label><input type="text" id="e-name"></div>
+      <div><label>Role</label>
+        <select id="e-role"><option>Collaborator</option><option>Mentor</option><option>Advisor</option><option>Student</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Title <small>(e.g. Assistant Professor)</small></label><input type="text" id="e-title"></div>
+      <div><label>Affiliation</label><input type="text" id="e-aff"></div>
+    </div>
+    <div class="row">
+      <div><label>Homepage URL</label><input type="url" id="e-url"></div>
+      <div><label>Photo URL <small>(optional — or upload below)</small></label><input type="url" id="e-img"></div>
+    </div>
+    <label>Upload photo <small>(JPG or PNG, square works best; stored under assets/img/people/)</small></label>
+    <input type="file" id="e-file" accept="image/jpeg,image/png">
+    <label>Note <small>(optional, e.g. "Collaborated on X")</small></label><input type="text" id="e-note">
+    <div class="actions"><button class="primary" data-submit="person">Add person</button></div>
+    <div class="msg" id="e-msg"></div>
+  </section>
+
+  <!-- EXPERIENCE / EDUCATION -->
+  <section class="panel" id="tab-experience">
+    <h2>Add experience or education</h2>
+    <p class="hint">Inserted at the top of the matching section in <code>_data/cv.yml</code> (newest first). Shows on the /cv/ page. Remember to update the PDF too.</p>
+    <label>Section</label>
+    <select id="x-kind"><option value="Experience">Work / research experience</option><option value="Education">Education</option></select>
+    <div id="x-exp">
+      <div class="row">
+        <div><label>Organisation</label><input type="text" id="x-org" placeholder="Company, lab or university"></div>
+        <div><label>Position</label><input type="text" id="x-pos" placeholder="Research Intern"></div>
+      </div>
+    </div>
+    <div id="x-edu" style="display:none">
+      <div class="row">
+        <div><label>Institution</label><input type="text" id="x-inst"></div>
+        <div><label>Degree <small>(e.g. MSc, BSc)</small></label><input type="text" id="x-deg"></div>
+      </div>
+      <label>Field of study</label><input type="text" id="x-area" placeholder="Computer Science">
+    </div>
+    <div class="row">
+      <div><label>Location</label><input type="text" id="x-loc" placeholder="City, State"></div>
+      <div><label>Website <small>(optional)</small></label><input type="url" id="x-url"></div>
+    </div>
+    <div class="row">
+      <div><label>Start <small>(YYYY or YYYY-MM)</small></label><input type="text" id="x-start" placeholder="2023-06"></div>
+      <div><label>End <small>(YYYY, YYYY-MM or "present")</small></label><input type="text" id="x-end" placeholder="present"></div>
+    </div>
+    <label>Highlights <small>— one per line</small></label>
+    <textarea id="x-high" placeholder="Built …&#10;Published …"></textarea>
+    <div class="actions"><button class="primary" data-submit="experience">Add to CV</button></div>
+    <div class="msg" id="x-msg"></div>
+  </section>
+
+  <!-- TEACHING -->
+  <section class="panel" id="tab-teaching">
+    <h2>Add a course</h2>
+    <p class="hint">Listed on /teaching/ grouped by year.</p>
+    <label>Course title</label><input type="text" id="t-title" placeholder="CMSC 461 Database Management Systems">
+    <div class="row">
+      <div><label>Your role</label><input type="text" id="t-role" placeholder="Teaching assistant"></div>
+      <div><label>Institution</label><input type="text" id="t-loc" value="UMBC"></div>
+    </div>
+    <div class="row">
+      <div><label>Term</label><select id="t-term"><option>Fall</option><option>Spring</option><option>Summer</option><option>Winter</option></select></div>
+      <div><label>Year</label><input type="number" id="t-year" min="2000" max="2100"></div>
+    </div>
+    <label>Description <small>(one or two sentences)</small></label>
+    <textarea id="t-desc"></textarea>
+    <div class="actions"><button class="primary" data-submit="teaching">Add course</button></div>
+    <div class="msg" id="t-msg"></div>
+  </section>
+
+  <!-- FILES -->
+  <section class="panel" id="tab-files">
+    <h2>Bio, CV, photo and any file</h2>
+    <p class="hint">Upload your CV PDF and profile photo, or open any text file in the repo and edit it in place.</p>
+
+    <label>CV (PDF) → <code>assets/pdf/cv.pdf</code></label>
+    <input type="file" id="f-cv" accept="application/pdf">
+    <div class="actions"><button class="primary" id="f-cv-up">Upload CV</button></div>
+    <div class="msg" id="f-cv-msg"></div>
+
+    <label>Profile photo (JPG, square) → <code>assets/img/prof_pic.jpg</code></label>
+    <input type="file" id="f-pic" accept="image/jpeg">
+    <div class="actions"><button class="primary" id="f-pic-up">Upload photo</button></div>
+    <div class="msg" id="f-pic-msg"></div>
+
+    <label>Edit a text file</label>
+    <div class="row">
+      <div>
+        <select id="f-path">
+          <option value="_pages/about.md">_pages/about.md (bio / home page)</option>
+          <option value="_data/cv.yml">_data/cv.yml (CV summary)</option>
+          <option value="_data/socials.yml">_data/socials.yml (links &amp; email)</option>
+          <option value="_data/people.yml">_data/people.yml (people page)</option>
+          <option value="_data/repositories.yml">_data/repositories.yml (software page)</option>
+          <option value="_bibliography/papers.bib">_bibliography/papers.bib (publications)</option>
+          <option value="_config.yml">_config.yml (site settings)</option>
+          <option value="__custom">other path…</option>
+        </select>
+      </div>
+      <div><input type="text" id="f-custom" placeholder="_projects/1_example_project.md" style="display:none"></div>
+    </div>
+    <div class="actions">
+      <button class="secondary" id="f-load">Load</button>
+      <button class="primary" id="f-save" disabled>Save</button>
+    </div>
+    <textarea class="code" id="f-text" spellcheck="false" placeholder="Click Load to fetch the file."></textarea>
+    <div class="msg" id="f-msg"></div>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const LS_KEY = 'site-dashboard-v1';
+  const S = { owner: 'Aamir7693', repo: 'Aamir7693.github.io', branch: 'main', token: '' };
+
+  // ---------- storage ----------
+  function loadSettings() {
+    try { Object.assign(S, JSON.parse(localStorage.getItem(LS_KEY) || '{}')); } catch (e) {}
+    $('s-owner').value = S.owner; $('s-repo').value = S.repo; $('s-token').value = S.token || '';
+    updateLinks();
+  }
+  function saveSettings() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+  function updateLinks() {
+    $('lnk-repo').href = `https://github.com/${S.owner}/${S.repo}`;
+    $('lnk-actions').href = `https://github.com/${S.owner}/${S.repo}/actions`;
+  }
+
+  // ---------- tabs ----------
+  const tabs = $('tabs');
+  tabs.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    showTab(b.dataset.tab);
+  });
+  function showTab(name) {
+    [...tabs.querySelectorAll('button')].forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    [...document.querySelectorAll('section.panel')].forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+    try { localStorage.setItem(LS_KEY + ':tab', name); } catch (e) {}
+  }
+
+  // ---------- helpers ----------
+  const msg = (id, kind, html) => { const m = $(id); m.className = 'msg ' + kind; m.innerHTML = html; };
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const today = () => new Date().toISOString().slice(0, 10);
+  const slug = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 60) || 'item';
+  const yq = (v) => JSON.stringify(String(v)); // JSON string == valid double-quoted YAML scalar
+  const bib = (v) => String(v).replace(/[{}]/g, ''); // keep braces balanced inside BibTeX fields
+  const lines = (s) => String(s).split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  function b64utf8(str) { const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b)); return btoa(bin); }
+  function utf8b64(b64) { const bin = atob(b64.replace(/\n/g, '')); const bytes = Uint8Array.from(bin, c => c.charCodeAt(0)); return new TextDecoder().decode(bytes); }
+  function fileToB64(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
+  function need(v, label) { if (!String(v || '').trim()) throw new Error(label + ' is required.'); return String(v).trim(); }
+
+  // ---------- GitHub API ----------
+  async function gh(path, opts = {}) {
+    if (!S.token) throw new Error('Not connected — open the Setup tab and save a token.');
+    const res = await fetch(`https://api.github.com/repos/${S.owner}/${S.repo}/${path}`, {
+      ...opts,
+      headers: { Authorization: 'Bearer ' + S.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) },
+    });
+    if (res.status === 404 && opts.allow404) return null;
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(`GitHub ${res.status}: ${data.message || 'request failed'}`);
+    return data;
+  }
+  async function getFile(path) {
+    const d = await gh(`contents/${encodeURI(path)}?ref=${S.branch}`, { allow404: true });
+    if (!d) return null;
+    return { sha: d.sha, text: utf8b64(d.content) };
+  }
+  async function putFile(path, contentB64, message, sha) {
+    const body = { message, content: contentB64, branch: S.branch };
+    if (sha) body.sha = sha;
+    const d = await gh(`contents/${encodeURI(path)}`, { method: 'PUT', body: JSON.stringify(body) });
+    return d.commit && d.commit.html_url;
+  }
+  async function createNew(path, text, message) {
+    const existing = await getFile(path);
+    if (existing) throw new Error(`A file already exists at ${path}. Change the title/date to get a different file name.`);
+    return putFile(path, b64utf8(text), message);
+  }
+  async function appendTo(path, extra, message) {
+    const f = await getFile(path);
+    if (!f) throw new Error(`${path} not found in the repository.`);
+    const text = f.text.replace(/\s*$/, '') + '\n\n' + extra.replace(/\s*$/, '') + '\n';
+    return putFile(path, b64utf8(text), message, f.sha);
+  }
+  function done(id, url, what) {
+    msg(id, 'ok', `${esc(what)} committed${url ? ` (<a href="${esc(url)}" target="_blank">view commit</a>)` : ''}. The site rebuilds in about 3 minutes — <a href="${esc($('lnk-actions').href)}" target="_blank">watch the build</a>.`);
+  }
+  async function run(id, btn, fn) {
+    msg(id, 'info', 'Working…'); if (btn) btn.disabled = true;
+    try { await fn(); } catch (e) { msg(id, 'bad', esc(e.message || e)); } finally { if (btn) btn.disabled = false; }
+  }
+
+  // ---------- setup ----------
+  $('s-save').addEventListener('click', (ev) => run('s-msg', ev.target, async () => {
+    S.owner = need($('s-owner').value, 'GitHub user'); S.repo = need($('s-repo').value, 'Repository'); S.token = need($('s-token').value, 'Token');
+    const d = await gh('');
+    if (!d.permissions || !d.permissions.push) throw new Error('Token works but has no write access to this repository. Give it Contents: Read and write.');
+    saveSettings(); updateLinks(); setConn(true, d.full_name);
+    msg('s-msg', 'ok', `Connected to ${esc(d.full_name)} with write access. You can use the other tabs now.`);
+  }));
+  $('s-forget').addEventListener('click', () => { S.token = ''; $('s-token').value = ''; saveSettings(); setConn(false); msg('s-msg', 'info', 'Token removed from this browser.'); });
+  function setConn(ok, name) { const c = $('conn'); c.className = ok ? 'ok' : 'bad'; c.textContent = ok ? `connected · ${name}` : 'not connected'; }
+  async function checkConn() { if (!S.token) { setConn(false); return; } try { const d = await gh(''); setConn(!!(d.permissions && d.permissions.push), d.full_name); } catch (e) { setConn(false); } }
+
+  // ---------- builders ----------
+  const builders = {
+    news: async () => {
+      const date = need($('n-date').value, 'Date'), text = need($('n-text').value, 'Text'), title = $('n-title').value.trim();
+      const name = `_news/${date}-${slug(title || text.split(/\s+/).slice(0, 6).join(' '))}.md`;
+      const fm = ['---', 'layout: post', ...(title ? [`title: ${yq(title)}`] : []), `date: ${date} 12:00:00-0400`, `inline: ${title ? 'false' : 'true'}`, 'related_posts: false', '---', '', text, ''].join('\n');
+      const url = await createNew(name, fm, `News: ${title || text.slice(0, 60)}`);
+      done('n-msg', url, 'News item'); $('n-text').value = ''; $('n-title').value = '';
+    },
+    paper: async () => {
+      const entry = buildBib();
+      const url = await appendTo('_bibliography/papers.bib', entry, `Add paper: ${$('p-title').value.trim().slice(0, 70)}`);
+      done('p-msg', url, 'Paper');
+    },
+    project: async () => {
+      const title = need($('j-title').value, 'Title'), desc = need($('j-desc').value, 'Description'), imp = parseInt($('j-imp').value || '1', 10) || 1;
+      const img = $('j-img').value.trim(), paper = $('j-paper').value.trim(), code = $('j-code').value.trim(), body = $('j-body').value.trim();
+      const links = [paper && `- **Paper:** <${paper}>`, code && `- **Code:** <${code}>`].filter(Boolean).join('\n');
+      const fm = ['---', 'layout: page', `title: ${yq(title)}`, `description: ${yq(desc)}`, `img: ${img ? yq(img) : ''}`, `importance: ${imp}`, 'related_publications: false', '---', '', body, '', links, ''].join('\n');
+      const url = await createNew(`_projects/${String(imp).padStart(2, '0')}_${slug(title)}.md`, fm, `Add project: ${title.slice(0, 60)}`);
+      done('j-msg', url, 'Project');
+    },
+    person: async () => {
+      const name = need($('e-name').value, 'Name'), role = $('e-role').value;
+      let image = $('e-img').value.trim();
+      const photo = $('e-file').files[0];
+      if (photo) {
+        if (photo.size > 5 * 1024 * 1024) throw new Error('Photo is larger than 5 MB — please resize it.');
+        const ext = photo.type === 'image/png' ? 'png' : 'jpg';
+        image = `assets/img/people/${slug(name)}.${ext}`;
+        const existing = await getFile(image).catch(() => null);
+        await putFile(image, await fileToB64(photo), `People: photo for ${name}`, existing && existing.sha);
+      }
+      const fields = { role, title: $('e-title').value, affiliation: $('e-aff').value, url: $('e-url').value, image, note: $('e-note').value };
+      let block = `- name: ${yq(name)}`;
+      for (const [k, v] of Object.entries(fields)) if (String(v).trim()) block += `\n  ${k}: ${yq(String(v).trim())}`;
+      const url = await appendTo('_data/people.yml', block, `People: add ${name}`);
+      done('e-msg', url, name); $('e-name').value = '';
+    },
+    experience: async () => {
+      const kind = $('x-kind').value, loc = $('x-loc').value.trim(), site = $('x-url').value.trim();
+      const start = need($('x-start').value, 'Start'), end = $('x-end').value.trim() || 'present', highs = lines($('x-high').value);
+      const ind = '      ', sub = '        ';
+      let block;
+      if (kind === 'Experience') {
+        const org = need($('x-org').value, 'Organisation'), pos = need($('x-pos').value, 'Position');
+        block = [`${ind}- company: ${yq(org)}`, `${sub}position: ${yq(pos)}`];
+      } else {
+        const inst = need($('x-inst').value, 'Institution'), deg = need($('x-deg').value, 'Degree'), area = $('x-area').value.trim();
+        block = [`${ind}- institution: ${yq(inst)}`, `${sub}studyType: ${yq(deg)}`, ...(area ? [`${sub}area: ${yq(area)}`] : [])];
+      }
+      if (loc) block.push(`${sub}location: ${yq(loc)}`);
+      if (site) block.push(`${sub}url: ${yq(site)}`);
+      block.push(`${sub}start_date: ${yq(start)}`, `${sub}end_date: ${yq(end)}`);
+      if (highs.length) block.push(`${sub}highlights:`, ...highs.map(h => `${sub}  - ${yq(h)}`));
+      const f = await getFile('_data/cv.yml'); if (!f) throw new Error('_data/cv.yml not found.');
+      const re = new RegExp(`^(    ${kind}:[ \\t]*\\n)`, 'm');
+      if (!re.test(f.text)) throw new Error(`Could not find a "    ${kind}:" section in _data/cv.yml — add it under sections: first.`);
+      const text = f.text.replace(re, `$1${block.join('\n')}\n\n`);
+      const url = await putFile('_data/cv.yml', b64utf8(text), `CV: add ${kind.toLowerCase()} entry`, f.sha);
+      done('x-msg', url, kind + ' entry');
+    },
+    teaching: async () => {
+      const title = need($('t-title').value, 'Course title'), year = need($('t-year').value, 'Year'), term = $('t-term').value;
+      const fm = ['---', 'layout: course', `title: ${yq(title)}`, `description: ${yq($('t-desc').value.trim())}`, `instructor: ${yq($('t-role').value.trim() || 'Teaching assistant')}`, `year: ${parseInt(year, 10)}`, `term: ${term}`, `location: ${yq($('t-loc').value.trim())}`, `course_id: ${slug(title)}`, '---', ''].join('\n');
+      const url = await createNew(`_teachings/${year}-${term.toLowerCase()}-${slug(title)}.md`, fm, `Teaching: add ${title.slice(0, 60)}`);
+      done('t-msg', url, 'Course');
+    },
+  };
+  const panelMsg = { news: 'n-msg', paper: 'p-msg', project: 'j-msg', person: 'e-msg', experience: 'x-msg', teaching: 't-msg' };
+  document.querySelectorAll('button[data-submit]').forEach(b => b.addEventListener('click', () => run(panelMsg[b.dataset.submit], b, builders[b.dataset.submit])));
+
+  function buildBib() {
+    const type = $('p-type').value, title = need($('p-title').value, 'Title'), year = need($('p-year').value, 'Year');
+    const authors = lines($('p-authors').value); if (!authors.length) throw new Error('At least one author is required.');
+    const venue = need($('p-venue').value, 'Venue');
+    const last = (authors[0].split(/\s+/).pop() || 'paper').toLowerCase().replace(/[^a-z]/g, '');
+    const key = `${last}${year}${slug(title).split('-')[0]}`;
+    const f = [];
+    const add = (k, v) => { if (String(v || '').trim()) f.push(`  ${k.padEnd(11)} = {${bib(String(v).trim())}},`); };
+    add('abbr', $('p-abbr').value);
+    add('title', title);
+    add('author', authors.join(' and '));
+    if (type === 'inproceedings') add('booktitle', venue); else add('journal', venue);
+    add('year', year);
+    add('doi', $('p-doi').value); add('arxiv', $('p-arxiv').value); add('pdf', $('p-pdf').value); add('code', $('p-code').value); add('website', $('p-website').value); add('award', $('p-award').value);
+    if ($('p-selected').checked) add('selected', 'true');
+    if ($('p-bib').checked) add('bibtex_show', 'true');
+    return `@${type}{${key},\n${f.join('\n')}\n}`;
+  }
+  $('p-preview').addEventListener('click', () => { try { const p = $('p-pre'); p.textContent = buildBib(); p.style.display = 'block'; msg('p-msg', 'info', ''); $('p-msg').style.display = 'none'; } catch (e) { msg('p-msg', 'bad', esc(e.message)); } });
+
+  // ---------- experience form toggle ----------
+  $('x-kind').addEventListener('change', () => { const edu = $('x-kind').value === 'Education'; $('x-exp').style.display = edu ? 'none' : ''; $('x-edu').style.display = edu ? '' : 'none'; });
+
+  // ---------- files ----------
+  async function upload(inputId, path, msgId, btn) {
+    await run(msgId, btn, async () => {
+      const file = $(inputId).files[0]; if (!file) throw new Error('Choose a file first.');
+      if (file.size > 20 * 1024 * 1024) throw new Error('File is larger than 20 MB.');
+      const existing = await getFile(path).catch(() => null);
+      const url = await putFile(path, await fileToB64(file), `Update ${path}`, existing && existing.sha);
+      done(msgId, url, file.name);
+    });
+  }
+  $('f-cv-up').addEventListener('click', (e) => upload('f-cv', 'assets/pdf/cv.pdf', 'f-cv-msg', e.target));
+  $('f-pic-up').addEventListener('click', (e) => upload('f-pic', 'assets/img/prof_pic.jpg', 'f-pic-msg', e.target));
+
+  let loadedSha = null, loadedPath = null;
+  const curPath = () => $('f-path').value === '__custom' ? need($('f-custom').value, 'Path') : $('f-path').value;
+  $('f-path').addEventListener('change', () => { $('f-custom').style.display = $('f-path').value === '__custom' ? '' : 'none'; });
+  $('f-load').addEventListener('click', (e) => run('f-msg', e.target, async () => {
+    const p = curPath(); const f = await getFile(p); if (!f) throw new Error(`${p} not found.`);
+    $('f-text').value = f.text; loadedSha = f.sha; loadedPath = p; $('f-save').disabled = false;
+    msg('f-msg', 'info', `Loaded ${esc(p)}. Edit below and click Save.`);
+  }));
+  $('f-save').addEventListener('click', (e) => run('f-msg', e.target, async () => {
+    if (!loadedPath) throw new Error('Load a file first.');
+    const url = await putFile(loadedPath, b64utf8($('f-text').value), `Edit ${loadedPath}`, loadedSha);
+    const f = await getFile(loadedPath); loadedSha = f && f.sha;
+    done('f-msg', url, loadedPath);
+  }));
+
+  // ---------- init ----------
+  loadSettings();
+  $('n-date').value = today(); $('p-year').value = new Date().getFullYear(); $('t-year').value = new Date().getFullYear();
+  let tab = 'setup'; try { tab = localStorage.getItem(LS_KEY + ':tab') || 'setup'; } catch (e) {}
+  showTab(S.token ? tab : 'setup');
+  checkConn();
+})();
+</script>
+</body>
+</html>

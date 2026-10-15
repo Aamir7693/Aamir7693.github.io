@@ -14,10 +14,18 @@ Every push to `main` rebuilds and redeploys the site automatically (see `.github
 | Add a project card               | add a file to `_projects/` (copy `1_example_project.md`)   |
 | List a GitHub repo on /software/ | `_data/repositories.yml`                                   |
 | Add a course to /teaching/       | add a file to `_teachings/` (copy `example-course.md`)     |
+| Add a mentor / collaborator      | `_data/people.yml` (photo optional, under `assets/img/people/`) |
+| Add work experience / education  | `_data/cv.yml` → `Experience:` / `Education:`              |
 | Change links / email             | `_data/socials.yml`                                        |
 | Site title, name, URL, features  | `_config.yml` (top of the file)                            |
 
 Everything is plain text. Edit on GitHub.com directly, or clone and edit locally — the site rebuilds on push either way.
+
+## Dashboard (no file editing needed)
+
+Open **`https://<username>.github.io/admin/`**. It has forms for news, papers, projects, people, experience/education, courses, your bio, and CV/photo uploads. Each submit makes one commit to this repo through GitHub's API, and the site rebuilds itself.
+
+One-time setup: create a **fine-grained personal access token** (GitHub → Settings → Developer settings → Personal access tokens → Fine-grained) scoped to *this repository only* with **Contents: Read and write**, paste it into the dashboard's Setup tab and click *Test & save*. The token stays in that browser's local storage; anyone who has it can commit to this repo, so treat it like a password and use *Forget token* on shared machines. The dashboard page itself is public but does nothing without a token.
 
 ## Paper entries
 
