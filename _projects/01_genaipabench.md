@@ -2,14 +2,14 @@
 layout: page
 title: GenAIPABench
 description: A benchmark for generative-AI privacy assistants — can an LLM answer questions about a privacy policy accurately, clearly and with the right citations?
-img: assets/img/projects/genaipabench.png
+img: assets/img/projects/genaipabench-fig1.png
 importance: 1
 related_publications: true
 ---
 
 <div class="row">
   <div class="col-sm mt-3 mt-md-0">
-    {% include figure.liquid loading="eager" path="assets/img/projects/genaipabench.png" title="Figure 1: a high-level overview of GenAIPABench" class="img-fluid rounded z-depth-1" %}
+    {% include figure.liquid loading="eager" path="assets/img/projects/genaipabench-fig1.png" title="Figure 1: a high-level overview of GenAIPABench" class="img-fluid rounded z-depth-1" %}
   </div>
 </div>
 <div class="caption">
