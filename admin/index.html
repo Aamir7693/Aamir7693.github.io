@@ -228,7 +228,9 @@
       <div><label>Start <small>(YYYY or YYYY-MM)</small></label><input type="text" id="x-start" placeholder="2023-06"></div>
       <div><label>End <small>(YYYY, YYYY-MM or "present")</small></label><input type="text" id="x-end" placeholder="present"></div>
     </div>
-    <label>Highlights <small>— one per line</small></label>
+    <label>One-line summary <small>(shown on the home-page timeline; keep it under ~150 characters)</small></label>
+    <input type="text" id="x-sum" placeholder="What you did there, in one sentence">
+    <label>Highlights <small>— one per line, shown on the CV page and when the timeline row is expanded</small></label>
     <textarea id="x-high" placeholder="Built …&#10;Published …&#10;(pasting bullets from your CV works too)"></textarea>
     <div class="row">
       <div><label>Logo <small>(PNG/JPG/SVG — stored under assets/img/logos/)</small></label><input type="file" id="x-logo" accept="image/png,image/jpeg,image/svg+xml"></div>
@@ -537,6 +539,8 @@
         const existingLogo = await getFile(logo).catch(() => null);
         await putFile(logo, await fileToB64(logoFile), `CV: logo ${logo}`, existingLogo && existingLogo.sha);
       }
+      const summary = $('x-sum').value.trim();
+      if (summary) block.splice(2, 0, `${sub}summary: ${yq(summary)}`);
       if (logo) block.splice(1, 0, `${sub}logo: ${yq(logo)}`);
       if (loc) block.push(`${sub}location: ${yq(loc)}`);
       if (site) block.push(`${sub}url: ${yq(site)}`);
@@ -554,6 +558,8 @@
       const title = need($('t-title').value, 'Course title'), year = need($('t-year').value, 'Year'), term = $('t-term').value;
       const fm = ['---', 'layout: course', `title: ${yq(title)}`, `description: ${yq($('t-desc').value.trim())}`, `instructor: ${yq($('t-role').value.trim() || 'Teaching assistant')}`, `year: ${parseInt(year, 10)}`, `term: ${term}`, `location: ${yq($('t-loc').value.trim())}`, `course_id: ${slug(title)}`, '---', ''].join('\n');
       const url = await createNew(`_teachings/${year}-${term.toLowerCase()}-${slug(title)}.md`, fm, `Teaching: add ${title.slice(0, 60)}`);
+      const tp = await getFile('_pages/teaching.md');
+      if (tp && /^nav: false/m.test(tp.text)) await putFile('_pages/teaching.md', b64utf8(tp.text.replace(/^nav: false/m, 'nav: true')), 'Teaching: show page in the menu', tp.sha);
       done('t-msg', url, 'Course');
     },
   };
@@ -624,8 +630,8 @@
     teaching:  { kind: 'files', dir: '_teachings' },
     people:    { kind: 'blocks', path: '_data/people.yml', start: /^- name:/gm, label: b => firstVal(b, 'name') + (firstVal(b, 'role') ? ` (${firstVal(b, 'role')})` : '') },
     papers:    { kind: 'blocks', path: '_bibliography/papers.bib', start: /^@\w+\{/gm, label: b => { const t = b.match(/title\s*=\s*\{([^}]*)\}/); const y = b.match(/year\s*=\s*\{([^}]*)\}/); return (t ? t[1] : b.split('\n')[0]) + (y ? ` (${y[1]})` : ''); } },
-    experience:{ kind: 'section', path: '_data/cv.yml', section: 'Experience', start: /^      - /gm, label: b => [firstVal(b, 'position'), firstVal(b, 'company')].filter(Boolean).join(' — ') },
-    education: { kind: 'section', path: '_data/cv.yml', section: 'Education', start: /^      - /gm, label: b => [firstVal(b, 'studyType'), firstVal(b, 'institution')].filter(Boolean).join(' — ') },
+    experience:{ kind: 'section', path: '_data/cv.yml', section: 'Experience', start: /^      - /gm, label: b => [firstVal(b, 'position'), firstVal(b, 'company')].filter(Boolean).join(' — ') + (firstVal(b, 'start_date') ? ` · ${firstVal(b, 'start_date')}` : '') },
+    education: { kind: 'section', path: '_data/cv.yml', section: 'Education', start: /^      - /gm, label: b => [firstVal(b, 'studyType'), firstVal(b, 'institution')].filter(Boolean).join(' — ') + (firstVal(b, 'start_date') ? ` · ${firstVal(b, 'start_date')}` : '') },
   };
   // Split `text` into [head, blocks[]] where each block starts at a `start` match. For sections, only the
   // region between "    <Section>:" and the next 4-space-indented key is considered.
@@ -685,7 +691,8 @@
   async function locate(src, it) {
     const f = await getFile(src.path); if (!f) throw new Error(`${src.path} not found.`);
     const blocks = splitBlocks(src, f.text);
-    const b = blocks.find(x => (src.label(x.text) || '(untitled)') === it.label);
+    const nth = mItems.slice(0, mItems.indexOf(it)).filter(x => x.label === it.label).length;
+    const b = blocks.filter(x => (src.label(x.text) || '(untitled)') === it.label)[nth];
     if (!b) throw new Error('That item changed since the list was loaded — reload the list and try again.');
     return { f, b };
   }

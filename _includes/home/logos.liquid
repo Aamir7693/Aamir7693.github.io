@@ -1,0 +1,33 @@
+{% comment %}
+  Strip of institution / company logos, taken from the `logo` fields of Experience and Education entries in
+  _data/cv.yml. A logo is shown only if the file exists in the repo (or is a full URL). Entries with
+  `placeholder: true` are skipped.
+{% endcomment %}
+{% assign empty_arr = "" | split: "," %}
+{% assign exp = site.data.cv.cv.sections.Experience | default: empty_arr %}
+{% assign edu = site.data.cv.cv.sections.Education | default: empty_arr %}
+{% assign all = exp | concat: edu %}
+{% assign shown = "" %}
+{% capture strip %}
+{% for e in all %}
+  {% if e.placeholder or e.logo == nil or e.logo == "" %}{% continue %}{% endif %}
+  {% assign key = "|" | append: e.logo | append: "|" %}
+  {% if shown contains key %}{% continue %}{% endif %}
+  {% assign src = "" %}
+  {% if e.logo contains "://" %}
+    {% assign src = e.logo %}
+  {% else %}
+    {% assign lp = e.logo | prepend: "/" | replace: "//", "/" %}
+    {% assign lf = site.static_files | where: "path", lp | first %}
+    {% if lf %}{% assign src = e.logo | relative_url %}{% endif %}
+  {% endif %}
+  {% if src == "" %}{% continue %}{% endif %}
+  {% assign shown = shown | append: key %}
+  {% assign label = e.company | default: e.institution %}
+  <a href="{{ e.url | default: '#' }}" title="{{ label }}" aria-label="{{ label }}"><img src="{{ src }}" alt="{{ label }}" loading="lazy"></a>
+{% endfor %}
+{% endcapture %}
+{% assign strip_text = strip | strip %}
+{% if strip_text != "" %}
+<div class="home-logos">{{ strip }}</div>
+{% endif %}

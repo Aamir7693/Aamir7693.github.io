@@ -2,14 +2,14 @@
 layout: about
 title: about
 permalink: /
-subtitle: PhD student in Computer Science at <a href="https://www.csee.umbc.edu/">UMBC</a>, advised by <a href="https://umbc.edu/academics/faculty/roberto-yus/">Prof. Roberto Yus</a>
+subtitle: PhD student in Computer Science at <a href="https://www.csee.umbc.edu/">UMBC</a> · previously Data Scientist Intern at <a href="https://www.amd.com/">AMD</a> and <a href="https://www.esri.com/">Esri</a>
 
 profile:
   align: right
   image: prof_pic.jpg
-  image_circular: false # crops the image to make it circular
+  image_circular: true # crops the image to make it circular
   more_info: >
-    <p>Department of Computer Science and Electrical Engineering</p>
+    <p>DAMS Lab · Dept. of Computer Science and Electrical Engineering</p>
     <p>University of Maryland, Baltimore County</p>
     <p>Baltimore, MD</p>
 
@@ -25,17 +25,35 @@ latest_posts:
   enabled: false # no blog
 ---
 
-I am a PhD student in Computer Science at the **University of Maryland, Baltimore County (UMBC)**, where I am advised by [Prof. Roberto Yus](https://umbc.edu/academics/faculty/roberto-yus/). My research focuses on **[your research area in a few words]**.
+{% include home/style.liquid %}
 
-<!-- Replace the paragraph above with 2–3 sentences on what you work on and why it matters. -->
+I am a PhD student in Computer Science at the **University of Maryland, Baltimore County (UMBC)**, advised by [Prof. Roberto Yus](https://umbc.edu/academics/faculty/roberto-yus/) in the DAMS Lab. My research sits at the intersection of **privacy, data management and generative AI**: I build and evaluate LLM-based systems that help people understand and control how their data is used — for example [GenAIPABench](https://arxiv.org/abs/2309.05138), a benchmark for generative-AI privacy assistants (PETS 2024).
 
-Before starting my PhD, I [one line on your previous degree or work].
+Alongside the PhD I have spent three summers in industry as a data scientist — at **AMD** (2024, 2025) building forecasting models, agentic analytics and a Snowflake semantic layer for manufacturing data, and at **Esri** (2026) fine-tuning small language models for next-action prediction over ArcGIS telemetry. I like problems where research ideas have to survive contact with real data and real users.
 
-I am always happy to talk about research, collaborations, or internships — the best way to reach me is by email.
+I'm happy to talk about research, collaborations or internships — email is the best way to reach me.
 
-<!--
-Tips:
-- Keep this under ~150 words; recruiters skim.
-- Bold your research area so it is scannable.
-- Put your photo at assets/img/prof_pic.jpg (square, ~600x600 px).
--->
+{% include home/logos.liquid %}
+
+## experience &amp; education
+
+<p class="tl-hint" style="font-size:.85rem;opacity:.7;margin:0 0 .4rem">Click a row to see details. Full version on the <a href="{{ '/cv/' | relative_url }}">CV page</a>.</p>
+
+{% include home/timeline.liquid %}
+
+<div class="home-cols" markdown="1">
+<div markdown="1">
+
+## interests
+
+{% include home/interests.liquid %}
+
+</div>
+<div markdown="1">
+
+## skills
+
+{% include home/skills.liquid %}
+
+</div>
+</div>

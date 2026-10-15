@@ -15,7 +15,8 @@ Every push to `main` rebuilds and redeploys the site automatically (see `.github
 | List a GitHub repo on /software/ | `_data/repositories.yml`                                   |
 | Add a course to /teaching/       | add a file to `_teachings/` (copy `example-course.md`)     |
 | Add a mentor / collaborator      | `_data/people.yml` (photo optional, under `assets/img/people/`) |
-| Add work experience / education  | `_data/cv.yml` → `Experience:` / `Education:` (optional `logo:` path) |
+| Add work experience / education  | `_data/cv.yml` → `Experience:` / `Education:` — fields `summary` (home timeline), `logo`, `abbr`, `placeholder: true` (hide from home) |
+| Interests / skills on the home page | `_data/cv.yml` → `Interests:` / `Skills:`                |
 | Change links / email             | `_data/socials.yml`                                        |
 | Site title, name, URL, features  | `_config.yml` (top of the file)                            |
 

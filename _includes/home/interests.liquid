@@ -1,0 +1,10 @@
+{% comment %} Interests list from _data/cv.yml → sections → Interests (name, icon). {% endcomment %}
+{% assign empty_arr = "" | split: "," %}
+{% assign ints = site.data.cv.cv.sections.Interests | default: empty_arr %}
+{% if ints.size > 0 %}
+<ul class="home-list">
+{% for i in ints %}
+  <li>{% if i.icon %}<i class="{{ i.icon }}"></i>{% endif %}<span>{{ i.name }}{% if i.keywords %} <small style="opacity:.7">— {{ i.keywords }}</small>{% endif %}</span></li>
+{% endfor %}
+</ul>
+{% endif %}

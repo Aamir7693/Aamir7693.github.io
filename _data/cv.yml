@@ -8,7 +8,8 @@ cv:
   location: Baltimore, MD
   image: ""
   summary: >-
-    One or two sentences on your research focus — replace me. Advised by Prof. Roberto Yus at UMBC.
+    PhD student working on privacy-preserving data management and generative AI, with industry experience
+    building LLM and analytics systems at AMD and Esri.
 
   social_networks:
     - network: GitHub
@@ -19,28 +20,32 @@ cv:
   sections:
     Education:
       - institution: University of Maryland, Baltimore County (UMBC)
+        abbr: UMBC # shown on the home-page timeline until a logo is uploaded
         logo: assets/img/logos/umbc.png # upload the file via the dashboard (Bio & files → upload to a path)
         location: Baltimore, MD
         url: https://www.csee.umbc.edu/
         area: Computer Science
         studyType: PhD
+        summary: "Advised by Prof. Roberto Yus. Research on privacy, data management and generative AI."
         start_date: "20XX" # <- your start year
-        end_date: present
+        end_date: "present"
         highlights:
           - "Advisor: Prof. Roberto Yus"
 
-      - institution: Your Previous University
+      - institution: Your Previous University # <- fill in, then remove the placeholder line
+        placeholder: true # hides this entry from the home-page timeline until it is real
         location: City, Country
         area: Computer Science
         studyType: BSc
-        start_date: 2019
-        end_date: 2023
+        start_date: "2019"
+        end_date: "2023"
 
     Experience:
       - company: "ESRI"
         logo: "assets/img/logos/esri.png"
         position: "Data Scientist Intern"
-        location: "Redland, California"
+        summary: "Fine-tuned Gemma-3-1B and trained a compact transformer for next-action prediction over ArcGIS Pro telemetry; shipped a Streamlit demo and a llama.cpp build."
+        location: "Redlands, California"
         url: "https://www.esri.com/en-us/home"
         start_date: "2026-05"
         end_date: "2026-08"
@@ -53,18 +58,22 @@ cv:
       - company: "AMD"
         logo: "assets/img/logos/amd.jpg"
         position: "Data Scientist Intern"
+        summary: "Agentic analytics and a Snowflake semantic layer for manufacturing data; GenAI workflow standards for a 20+ person team."
         location: "Austin, Texas"
         url: "https://www.amd.com/"
-        start_date: "2024-02"
-        end_date: "2024-08"
+        start_date: "2025-05"
+        end_date: "2025-08"
         highlights:
-          - "Improved supply-chain forecasting accuracy by 15% via feature engineering, validation design, and model iteration on historical operational signals."
-          - "Eliminated redundant features and remediated data leakage in training/validation pipelines to improve deployment reliability."
-          - "Engineered automated batch scoring pipelines (Dataiku → Snowflake) enabling monitoring of predictions and model health."
+          - "Built an agentic RMA analytics system (Smol Agents + Snowflake Cortex) to automate trend analysis and root-cause slicing over manufacturing data."
+          - "Productized a Snowflake semantic layer across 15+ curated tables (metrics, joins, row-level access), enabling Cortex Analyst NLQ and reducing recurring turnaround by 85%."
+          - "Developed a Cortex-based log triage pipeline to extract and summarize errors; optimized prompts to reduce token spend while maintaining extraction quality."
+          - "Deployed production Streamlit applications for KPI exploration and AI-assisted insights used by leadership stakeholders."
+          - "Standardized GenAI workflows using an internal evaluation process (safety/PII/latency), improving iteration speed across 20+ team members."
 
       - company: "AMD"
         logo: "assets/img/logos/amd.jpg"
         position: "Data Scientist Intern"
+        summary: "Supply-chain forecasting (+15% accuracy), leakage-free training pipelines, automated batch scoring in Dataiku → Snowflake."
         location: "Austin, Texas"
         url: "https://www.amd.com/"
         start_date: "2024-02"
@@ -74,15 +83,17 @@ cv:
           - "Eliminated redundant features and remediated data leakage in training/validation pipelines to improve deployment reliability."
           - "Engineered automated batch scoring pipelines (Dataiku → Snowflake) enabling monitoring of predictions and model health."
 
-      - company: Prof. Roberto Yus's group, UMBC
-        logo: assets/img/logos/umbc.png
-        position: Graduate Research Assistant
-        location: Baltimore, MD
+      - company: "DAMS Lab (Prof. Roberto Yus), UMBC"
+        abbr: "UMBC"
+        logo: "assets/img/logos/umbc.png"
+        position: "Graduate Research Assistant"
+        summary: "Privacy-preserving data management and LLM-based privacy assistants; lead author of GenAIPABench (PETS 2024)."
+        location: "Baltimore, MD"
+        url: "https://umbc.edu/academics/faculty/roberto-yus/"
         start_date: "20XX" # <- your start year
-        end_date: present
+        end_date: "present"
         highlights:
-          - One-line description of a project and its outcome.
-          - Another one-line description.
+          - "Designed GenAIPABench, a benchmark for evaluating generative-AI privacy assistants on policy questions, summaries and citations."
 
     Awards:
       - title: Example Fellowship or Award
@@ -91,12 +102,25 @@ cv:
         summary: One line on what it recognises.
 
     Skills:
-      - name: Programming
+      - name: Languages & ML
         icon: fa-solid fa-code
-        keywords: "Python, PyTorch, C++, SQL"
+        keywords: "Python, SQL, PyTorch, Hugging Face, LoRA/PEFT, llama.cpp"
+      - name: Data & platforms
+        icon: fa-solid fa-database
+        keywords: "Snowflake, Snowflake Cortex, Dataiku, Streamlit, Git, Docker"
       - name: Research
         icon: fa-solid fa-flask
-        keywords: "Machine learning, experimental design, scientific writing"
+        keywords: "LLM evaluation, benchmark design, privacy policies, experimental design, scientific writing"
+
+    Interests:
+      - name: Privacy & data management
+        icon: fa-solid fa-user-shield
+      - name: Large language models & generative AI
+        icon: fa-solid fa-brain
+      - name: Agentic AI systems
+        icon: fa-solid fa-robot
+      - name: Applied machine learning
+        icon: fa-solid fa-chart-line
 
     Languages:
       - name: English

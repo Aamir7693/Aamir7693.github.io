@@ -1,0 +1,10 @@
+{% comment %} Skill chips from _data/cv.yml → sections → Skills (name, keywords comma-separated). {% endcomment %}
+{% assign empty_arr = "" | split: "," %}
+{% assign skills = site.data.cv.cv.sections.Skills | default: empty_arr %}
+{% for s in skills %}
+  <p class="chip-group">{% if s.icon %}<i class="{{ s.icon }}"></i> {% endif %}{{ s.name }}</p>
+  <div class="chips">
+  {% assign kws = s.keywords | split: "," %}
+  {% for k in kws %}<span class="chip">{{ k | strip }}</span>{% endfor %}
+  </div>
+{% endfor %}

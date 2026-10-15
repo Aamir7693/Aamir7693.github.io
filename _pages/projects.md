@@ -2,7 +2,7 @@
 layout: page
 title: projects
 permalink: /projects/
-description: Research projects and selected side projects.
+description: Research projects, with links to papers and code.
 nav: true
 nav_order: 2
 horizontal: false

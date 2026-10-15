@@ -1,0 +1,68 @@
+{% comment %}
+  One reverse-chronological timeline mixing Experience and Education from _data/cv.yml.
+  Each row shows logo, dates, title, organisation and the one-line `summary`; rows with `highlights` expand on click.
+  Entries with `placeholder: true` are skipped. Dates are compared as strings, so keep them quoted ("2024-02").
+{% endcomment %}
+{% assign empty_arr = "" | split: "," %}
+{% assign exp = site.data.cv.cv.sections.Experience | default: empty_arr %}
+{% assign edu = site.data.cv.cv.sections.Education | default: empty_arr %}
+{% assign items = exp | concat: edu | sort: "start_date" | reverse %}
+<ul class="tl">
+{% for e in items %}
+  {% if e.placeholder %}{% continue %}{% endif %}
+  {% if e.institution %}
+    {% assign kind = "tl-edu" %}
+    {% assign title = e.studyType | default: e.degree %}
+    {% if e.area %}{% assign title = title | append: " in " | append: e.area %}{% endif %}
+    {% assign org = e.institution %}
+  {% else %}
+    {% assign kind = "tl-exp" %}
+    {% assign title = e.position %}
+    {% assign org = e.company | default: e.name %}
+  {% endif %}
+  {% assign sd = e.start_date | append: "" | split: "-" | first %}
+  {% assign ed = e.end_date | append: "" | split: "-" | first | default: "present" %}
+  {% if ed == "" %}{% assign ed = "present" %}{% endif %}
+  {% if sd == ed %}{% assign when = sd %}{% else %}{% assign when = sd | append: " – " | append: ed %}{% endif %}
+
+  {% assign src = "" %}
+  {% if e.logo and e.logo != "" %}
+    {% if e.logo contains "://" %}
+      {% assign src = e.logo %}
+    {% else %}
+      {% assign lp = e.logo | prepend: "/" | replace: "//", "/" %}
+      {% assign lf = site.static_files | where: "path", lp | first %}
+      {% if lf %}{% assign src = e.logo | relative_url %}{% endif %}
+    {% endif %}
+  {% endif %}
+  {% if e.abbr %}
+    {% assign initials = e.abbr | slice: 0, 4 | upcase %}
+  {% else %}
+    {% assign initials = "" %}
+    {% assign words = org | split: " " %}
+    {% for w in words limit: 3 %}{% assign c = w | slice: 0, 1 %}{% assign initials = initials | append: c %}{% endfor %}
+    {% assign initials = initials | upcase %}
+  {% endif %}
+
+  {% capture row %}
+    <div class="tl-logo">{% if src != "" %}<img src="{{ src }}" alt="{{ org }}" loading="lazy">{% else %}<span>{{ initials }}</span>{% endif %}</div>
+    <div class="tl-main">
+      <p class="tl-title">{{ title }}</p>
+      <p class="tl-org">{% if e.url %}<a href="{{ e.url }}">{{ org }}</a>{% else %}{{ org }}{% endif %}{% if e.location %} · {{ e.location }}{% endif %}</p>
+      {% if e.summary %}<p class="tl-sum">{{ e.summary }}</p>{% endif %}
+    </div>
+    <span class="tl-date">{{ when }}</span>
+  {% endcapture %}
+
+  <li class="tl-item {{ kind }}">
+  {% if e.highlights and e.highlights.size > 0 %}
+    <details class="tl-card">
+      <summary class="tl-row">{{ row }}<span class="tl-chevron">▶</span></summary>
+      <div class="tl-body"><ul>{% for h in e.highlights %}<li>{{ h | markdownify | remove: '<p>' | remove: '</p>' }}</li>{% endfor %}</ul></div>
+    </details>
+  {% else %}
+    <div class="tl-row">{{ row }}</div>
+  {% endif %}
+  </li>
+{% endfor %}
+</ul>
