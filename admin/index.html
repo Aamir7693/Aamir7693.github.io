@@ -70,6 +70,7 @@
     <button data-tab="person">Person</button>
     <button data-tab="experience">Experience</button>
     <button data-tab="teaching">Teaching</button>
+    <button data-tab="manage">Manage</button>
     <button data-tab="files">Bio &amp; files</button>
     <button data-tab="build">Build</button>
   </nav>
@@ -302,6 +303,36 @@
     <textarea class="code" id="f-text" spellcheck="false" placeholder="Click Load to fetch the file."></textarea>
     <div class="msg" id="f-msg"></div>
   </section>
+  <!-- MANAGE -->
+  <section class="panel" id="tab-manage">
+    <h2>Edit or delete existing items</h2>
+    <p class="hint">Pick a category and load the list. Edit opens the item's text so you can change any field; Delete removes it. Each save or delete is one commit.</p>
+    <div class="row">
+      <div>
+        <select id="m-kind">
+          <option value="news">News</option>
+          <option value="papers">Papers</option>
+          <option value="projects">Projects</option>
+          <option value="teaching">Courses</option>
+          <option value="people">People</option>
+          <option value="experience">Experience (CV)</option>
+          <option value="education">Education (CV)</option>
+        </select>
+      </div>
+      <div><button class="secondary" id="m-load" style="margin-top:0">Load list</button></div>
+    </div>
+    <div id="m-list" style="margin-top:.8rem"></div>
+    <div id="m-editor" style="display:none; margin-top:1rem">
+      <label id="m-what">Editing</label>
+      <textarea class="code" id="m-text" spellcheck="false"></textarea>
+      <div class="actions">
+        <button class="primary" id="m-save">Save changes</button>
+        <button class="secondary" id="m-cancel">Cancel</button>
+      </div>
+    </div>
+    <div class="msg" id="m-msg"></div>
+  </section>
+
   <!-- BUILD -->
   <section class="panel" id="tab-build">
     <h2>Build status</h2>
@@ -570,6 +601,104 @@
     const f = await getFile(loadedPath); loadedSha = f && f.sha;
     done('f-msg', url, loadedPath);
   }));
+
+  // ---------- manage tab ----------
+  const firstVal = (block, key) => { const m = block.match(new RegExp('^\\s*-?\\s*' + key + ':\\s*(.*)$', 'm')); return m ? m[1].replace(/^"(.*)"$/, '$1').trim() : ''; };
+  const sources = {
+    news:      { kind: 'files', dir: '_news' },
+    projects:  { kind: 'files', dir: '_projects' },
+    teaching:  { kind: 'files', dir: '_teachings' },
+    people:    { kind: 'blocks', path: '_data/people.yml', start: /^- name:/gm, label: b => firstVal(b, 'name') + (firstVal(b, 'role') ? ` (${firstVal(b, 'role')})` : '') },
+    papers:    { kind: 'blocks', path: '_bibliography/papers.bib', start: /^@\w+\{/gm, label: b => { const t = b.match(/title\s*=\s*\{([^}]*)\}/); const y = b.match(/year\s*=\s*\{([^}]*)\}/); return (t ? t[1] : b.split('\n')[0]) + (y ? ` (${y[1]})` : ''); } },
+    experience:{ kind: 'section', path: '_data/cv.yml', section: 'Experience', start: /^      - /gm, label: b => [firstVal(b, 'position'), firstVal(b, 'company')].filter(Boolean).join(' — ') },
+    education: { kind: 'section', path: '_data/cv.yml', section: 'Education', start: /^      - /gm, label: b => [firstVal(b, 'studyType'), firstVal(b, 'institution')].filter(Boolean).join(' — ') },
+  };
+  // Split `text` into [head, blocks[]] where each block starts at a `start` match. For sections, only the
+  // region between "    <Section>:" and the next 4-space-indented key is considered.
+  function splitBlocks(src, text) {
+    let from = 0, to = text.length;
+    if (src.kind === 'section') {
+      const m = text.match(new RegExp(`^    ${src.section}:[ \\t]*\\n`, 'm'));
+      if (!m) throw new Error(`No "${src.section}:" section found in ${src.path}.`);
+      from = m.index + m[0].length;
+      const rest = text.slice(from);
+      const next = rest.match(/^    [A-Za-z]/m);
+      to = next ? from + next.index : text.length;
+    }
+    const region = text.slice(from, to);
+    const starts = []; let mm; const re = new RegExp(src.start.source, 'gm');
+    while ((mm = re.exec(region)) !== null) { starts.push(mm.index); if (mm.index === re.lastIndex) re.lastIndex++; }
+    const blocks = starts.map((st, i) => { const en = i + 1 < starts.length ? starts[i + 1] : region.length; return { from: from + st, to: from + en, text: region.slice(st, en) }; });
+    return blocks;
+  }
+  let mItems = [], mEditing = null;
+  function renderList(items) {
+    $('m-list').innerHTML = items.length ? items.map((it, i) => `<div style="display:flex;gap:.5rem;align-items:center;padding:.45rem 0;border-top:1px solid var(--line);font-size:.9rem"><span style="flex:1">${esc(it.label)}</span><button class="secondary" data-edit="${i}">Edit</button><button class="secondary" data-del="${i}" style="color:var(--bad)">Delete</button></div>`).join('') : '<p class="hint">Nothing here yet.</p>';
+  }
+  async function loadItems() {
+    const src = sources[$('m-kind').value];
+    if (src.kind === 'files') {
+      const d = await gh(`contents/${src.dir}?ref=${S.branch}`, { allow404: true });
+      mItems = (d || []).filter(f => f.type === 'file' && /\.md$/.test(f.name)).map(f => ({ label: f.name.replace(/\.md$/, ''), path: f.path, sha: f.sha }));
+    } else {
+      const f = await getFile(src.path); if (!f) throw new Error(`${src.path} not found.`);
+      mItems = splitBlocks(src, f.text).map(b => ({ label: src.label(b.text) || '(untitled)', text: b.text }));
+    }
+    renderList(mItems); $('m-editor').style.display = 'none'; mEditing = null;
+  }
+  $('m-load').addEventListener('click', (e) => run('m-msg', e.target, async () => { await loadItems(); $('m-msg').style.display = 'none'; }));
+  $('m-list').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    const src = sources[$('m-kind').value];
+    if (b.dataset.edit !== undefined) {
+      const it = mItems[+b.dataset.edit];
+      run('m-msg', b, async () => {
+        if (src.kind === 'files') { const f = await getFile(it.path); if (!f) throw new Error('File vanished — reload the list.'); it.sha = f.sha; $('m-text').value = f.text; }
+        else $('m-text').value = it.text.replace(/\s*$/, '');
+        mEditing = it; $('m-what').textContent = `Editing: ${it.label}`; $('m-editor').style.display = ''; $('m-msg').style.display = 'none';
+        $('m-text').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    } else if (b.dataset.del !== undefined) {
+      const it = mItems[+b.dataset.del];
+      if (!confirm(`Delete "${it.label}"? This makes a commit removing it.`)) return;
+      run('m-msg', b, async () => {
+        const url = await removeItem(src, it);
+        done('m-msg', url, `"${it.label}"`); await loadItems();
+      });
+    }
+  });
+  // Re-read the file at save/delete time so a stale list can't clobber a newer edit; locate the block by label.
+  async function locate(src, it) {
+    const f = await getFile(src.path); if (!f) throw new Error(`${src.path} not found.`);
+    const blocks = splitBlocks(src, f.text);
+    const b = blocks.find(x => (src.label(x.text) || '(untitled)') === it.label);
+    if (!b) throw new Error('That item changed since the list was loaded — reload the list and try again.');
+    return { f, b };
+  }
+  async function removeItem(src, it) {
+    if (src.kind === 'files') {
+      const d = await gh(`contents/${encodeURI(it.path)}`, { method: 'DELETE', body: JSON.stringify({ message: `Delete ${it.path}`, sha: it.sha, branch: S.branch }), headers: { 'Content-Type': 'application/json' } });
+      return d.commit && d.commit.html_url;
+    }
+    const { f, b } = await locate(src, it);
+    const text = (f.text.slice(0, b.from) + f.text.slice(b.to)).replace(/\n{3,}/g, '\n\n');
+    return putFile(src.path, b64utf8(text), `Delete "${it.label.slice(0, 60)}" from ${src.path}`, f.sha);
+  }
+  $('m-save').addEventListener('click', (e) => run('m-msg', e.target, async () => {
+    if (!mEditing) throw new Error('Nothing is being edited.');
+    const src = sources[$('m-kind').value]; const it = mEditing; const newText = $('m-text').value;
+    let url;
+    if (src.kind === 'files') {
+      url = await putFile(it.path, b64utf8(newText), `Edit ${it.path}`, it.sha);
+    } else {
+      if (!newText.trim()) throw new Error('Use Delete to remove an item; the text can\'t be empty.');
+      const { f, b } = await locate(src, it);
+      const text = f.text.slice(0, b.from) + newText.replace(/\s*$/, '') + '\n\n' + f.text.slice(b.to).replace(/^\s*\n/, '');
+      url = await putFile(src.path, b64utf8(text.replace(/\n{3,}/g, '\n\n')), `Edit "${it.label.slice(0, 60)}" in ${src.path}`, f.sha);
+    }
+    done('m-msg', url, `"${it.label}"`); await loadItems();
+  }));
+  $('m-cancel').addEventListener('click', () => { $('m-editor').style.display = 'none'; mEditing = null; });
 
   // ---------- build tab ----------
   const permHint = ' This needs the token to have <b>Actions: Read and write</b> (see the note below the buttons).';
