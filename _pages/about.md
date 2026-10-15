@@ -6,7 +6,7 @@ subtitle: PhD student in Computer Science at <a href="https://www.csee.umbc.edu/
 
 profile:
   align: right
-  image: aamir.jpg
+  image: aamir-portrait.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
     <p>DAMS Lab · Dept. of Computer Science and Electrical Engineering</p>
