@@ -4,7 +4,7 @@ permalink: /people/
 title: people
 description: The people I work with and learn from. Edit <code>_data/people.yml</code> or use the dashboard to add someone.
 nav: true
-nav_order: 6
+nav_order: 5
 ---
 
 <style>
