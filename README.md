@@ -23,9 +23,9 @@ Everything is plain text. Edit on GitHub.com directly, or clone and edit locally
 
 ## Dashboard (no file editing needed)
 
-Open **`https://<username>.github.io/admin/`**. It has forms for news, papers, projects, people, experience/education, courses, your bio, and CV/photo uploads. Each submit makes one commit to this repo through GitHub's API, and the site rebuilds itself.
+Open **`https://<username>.github.io/admin/`**. Overview shows what's on the site and the build status; each content tab (Papers, Projects, Experience, Education, People, News, Courses) lists the existing items with Edit/Delete and a form to add or edit — no YAML or BibTeX by hand. Bio & photo edits the home page text, tagline, photo and social links; Files handles the CV PDF and any other file. Each save makes one commit to this repo through GitHub's API, and the site rebuilds itself (~3 min; the header pill turns green when it's live).
 
-One-time setup: create a **fine-grained personal access token** (GitHub → Settings → Developer settings → Personal access tokens → Fine-grained) scoped to *this repository only* with **Contents: Read and write**, paste it into the dashboard's Setup tab and click *Test & save*. The token stays in that browser's local storage; anyone who has it can commit to this repo, so treat it like a password and use *Forget token* on shared machines. The dashboard page itself is public but does nothing without a token.
+One-time setup: create a **fine-grained personal access token** (GitHub → Settings → Developer settings → Personal access tokens → Fine-grained) scoped to *this repository only* with **Contents: Read and write** (plus **Actions: Read and write** for build status and the Rebuild button), paste it into the dashboard's Setup tab and click *Test & save*. The token stays in that browser's local storage; anyone who has it can commit to this repo, so treat it like a password and use *Forget token* on shared machines. The dashboard page itself is public but does nothing without a token.
 
 ## Paper entries
 

@@ -6,808 +6,650 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Site dashboard</title>
 <style>
-  :root { --bg:#f6f7f9; --card:#fff; --text:#1b1f24; --muted:#5b6470; --line:#d9dee5; --accent:#2a63d4; --ok:#1d7a3d; --bad:#b4232c; --warn:#8a5a00; }
+  :root { --bg:#f5f6f8; --card:#fff; --text:#1b1f24; --muted:#5f6974; --line:#dde2e8; --accent:#0f7b6c; --accent-ink:#fff; --ok:#1d7a3d; --bad:#b4232c; --warn:#8a5a00; --soft:#eef1f4; }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#0f1216; --card:#171b21; --text:#e6e9ee; --muted:#9aa4b1; --line:#2b323c; --accent:#6ea0ff; --ok:#5fc87f; --bad:#ff7b84; --warn:#f0b64a; }
+    :root { --bg:#0f1216; --card:#171b21; --text:#e6e9ee; --muted:#9aa4b1; --line:#2b323c; --accent:#3cc0a9; --accent-ink:#0b1512; --ok:#5fc87f; --bad:#ff7b84; --warn:#f0b64a; --soft:#1f252d; }
   }
   * { box-sizing: border-box; }
   body { margin:0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--text); }
-  header { display:flex; flex-wrap:wrap; gap:.6rem 1rem; align-items:center; padding:.9rem 1rem; border-bottom:1px solid var(--line); background:var(--card); }
-  header h1 { font-size:1.05rem; margin:0; }
-  header .spacer { flex:1; }
-  header a { color:var(--accent); text-decoration:none; font-size:.9rem; }
-  #conn { font-size:.85rem; color:var(--muted); }
-  #conn.ok { color:var(--ok); } #conn.bad { color:var(--bad); }
-  main { max-width: 860px; margin: 0 auto; padding: 1rem; }
-  nav.tabs { display:flex; flex-wrap:wrap; gap:.35rem; margin:.25rem 0 1rem; }
-  nav.tabs button { border:1px solid var(--line); background:var(--card); color:var(--text); padding:.4rem .75rem; border-radius:999px; cursor:pointer; font-size:.9rem; }
-  nav.tabs button.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-  section.panel { display:none; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.1rem; }
+  a { color: var(--accent); }
+  header { position: sticky; top: 0; z-index: 5; display:flex; flex-wrap:wrap; gap:.5rem 1rem; align-items:center; padding:.7rem 1rem; border-bottom:1px solid var(--line); background:var(--card); }
+  header h1 { font-size:1.02rem; margin:0; }
+  .spacer { flex:1; }
+  .pill { display:inline-flex; align-items:center; gap:.35rem; font-size:.8rem; padding:.2rem .6rem; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:var(--soft); white-space:nowrap; }
+  .pill.ok { color:var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--line)); }
+  .pill.bad { color:var(--bad); }
+  .pill.warn { color:var(--warn); }
+  .pill .dot { width:.55rem; height:.55rem; border-radius:50%; background:currentColor; }
+  .pill.busy .dot { animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity:.25; } }
+  header a.lnk { font-size:.85rem; text-decoration:none; }
+  main { max-width: 900px; margin: 0 auto; padding: 1rem; }
+  nav.tabs { display:flex; flex-wrap:wrap; gap:.3rem; margin:.2rem 0 1rem; }
+  nav.tabs button { border:1px solid var(--line); background:var(--card); color:var(--text); padding:.38rem .7rem; border-radius:999px; cursor:pointer; font-size:.88rem; }
+  nav.tabs button.active { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
+  section.panel { display:none; }
   section.panel.active { display:block; }
-  section.panel h2 { margin:0 0 .25rem; font-size:1.15rem; }
-  .hint { color:var(--muted); font-size:.9rem; margin:0 0 1rem; }
-  label { display:block; font-size:.85rem; font-weight:600; margin:.7rem 0 .25rem; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1rem 1.1rem; margin-bottom:1rem; }
+  .card h2 { margin:0 0 .25rem; font-size:1.1rem; }
+  .card h3 { margin:.2rem 0 .4rem; font-size:.95rem; }
+  .hint { color:var(--muted); font-size:.88rem; margin:0 0 .8rem; }
+  label { display:block; font-size:.84rem; font-weight:600; margin:.65rem 0 .22rem; }
   label small { font-weight:400; color:var(--muted); }
-  input[type=text], input[type=url], input[type=date], input[type=number], input[type=password], select, textarea {
-    width:100%; padding:.5rem .6rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
-  textarea { min-height: 6rem; resize: vertical; }
-  textarea.code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.85rem; min-height: 14rem; }
+  input[type=text], input[type=url], input[type=date], input[type=number], input[type=password], input[type=email], select, textarea {
+    width:100%; padding:.48rem .6rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); font:inherit; }
+  textarea { min-height: 5.5rem; resize: vertical; }
+  textarea.code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.84rem; min-height: 12rem; }
   .row { display:grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
-  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
-  .check { display:flex; align-items:center; gap:.5rem; margin-top:.8rem; font-weight:500; font-size:.9rem; }
+  .row3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 1rem; }
+  @media (max-width: 600px) { .row, .row3 { grid-template-columns: 1fr; } }
+  .check { display:flex; align-items:center; gap:.5rem; margin-top:.7rem; font-weight:500; font-size:.9rem; }
   .check input { width:auto; }
-  .actions { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-top:1.1rem; }
-  button.primary { background:var(--accent); color:#fff; border:0; padding:.55rem 1rem; border-radius:8px; font:inherit; font-weight:600; cursor:pointer; }
-  button.secondary { background:transparent; color:var(--text); border:1px solid var(--line); padding:.5rem .9rem; border-radius:8px; font:inherit; cursor:pointer; }
-  button:disabled { opacity:.55; cursor:default; }
-  .msg { margin-top:.9rem; padding:.6rem .8rem; border-radius:8px; font-size:.9rem; display:none; white-space:pre-wrap; }
-  .msg.ok { display:block; background:rgba(29,122,61,.12); color:var(--ok); }
-  .msg.bad { display:block; background:rgba(180,35,44,.12); color:var(--bad); }
-  .msg.info { display:block; background:rgba(42,99,212,.10); color:var(--text); }
-  .msg a { color:inherit; }
-  pre.preview { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:.7rem; font-size:.8rem; overflow:auto; margin:.6rem 0 0; }
-  details { margin-top:.8rem; } summary { cursor:pointer; color:var(--muted); font-size:.9rem; }
-  ol.steps { padding-left:1.2rem; color:var(--muted); font-size:.9rem; }
-  ol.steps li { margin:.2rem 0; }
+  .actions { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin-top:1rem; }
+  button.primary { background:var(--accent); color:var(--accent-ink); border:0; padding:.55rem 1rem; border-radius:8px; font:inherit; font-weight:600; cursor:pointer; }
+  button.secondary { background:transparent; color:var(--text); border:1px solid var(--line); padding:.5rem .85rem; border-radius:8px; font:inherit; cursor:pointer; }
+  button.tiny { padding:.25rem .55rem; font-size:.8rem; }
+  button.danger { color:var(--bad); }
+  button:disabled { opacity:.5; cursor:default; }
+  .list { border-top:1px solid var(--line); }
+  .item { display:flex; gap:.6rem; align-items:center; padding:.5rem 0; border-bottom:1px solid var(--line); font-size:.92rem; }
+  .item .lbl { flex:1; min-width:0; }
+  .item .lbl small { color:var(--muted); display:block; font-size:.78rem; }
+  .empty { color:var(--muted); font-size:.9rem; padding:.6rem 0; }
+  details.raw { margin-top:.6rem; } details.raw summary { cursor:pointer; color:var(--muted); font-size:.86rem; }
+  .stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap:.7rem; }
+  .stat { background:var(--soft); border-radius:10px; padding:.7rem .8rem; cursor:pointer; }
+  .stat b { display:block; font-size:1.5rem; line-height:1.1; }
+  .stat span { font-size:.82rem; color:var(--muted); }
+  .commits .item { font-size:.86rem; }
+  ol.steps { padding-left:1.2rem; color:var(--muted); font-size:.88rem; } ol.steps li { margin:.15rem 0; }
+  #toasts { position:fixed; right:1rem; bottom:1rem; display:flex; flex-direction:column; gap:.5rem; z-index:10; max-width:min(420px, 92vw); }
+  .toast { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:10px; padding:.6rem .8rem; font-size:.9rem; box-shadow:0 8px 24px rgba(0,0,0,.15); }
+  .toast.ok { border-left-color:var(--ok); } .toast.bad { border-left-color:var(--bad); } .toast.info { border-left-color:var(--accent); }
+  .toast a { color:inherit; }
+  .figwrap { border:1px dashed var(--line); border-radius:10px; padding:.6rem .8rem; margin-top:.6rem; }
+  .thumb { max-height:70px; max-width:160px; border-radius:6px; border:1px solid var(--line); background:#fff; margin-top:.3rem; }
+  kbd { font-family: ui-monospace, monospace; font-size:.8rem; padding:.05rem .3rem; border:1px solid var(--line); border-radius:4px; background:var(--soft); }
 </style>
 </head>
 <body>
 <header>
   <h1>Site dashboard</h1>
-  <span id="conn">not connected</span>
+  <span class="pill" id="conn"><span class="dot"></span><span>not connected</span></span>
+  <span class="pill" id="build" title="Build status"><span class="dot"></span><span>build: unknown</span></span>
   <span class="spacer"></span>
-  <a id="lnk-site" href="/" target="_blank">open site ↗</a>
-  <a id="lnk-actions" href="#" target="_blank">build status ↗</a>
-  <a id="lnk-repo" href="#" target="_blank">repo ↗</a>
+  <a class="lnk" id="lnk-site" href="/" target="_blank">open site ↗</a>
+  <a class="lnk" id="lnk-repo" href="#" target="_blank">repo ↗</a>
 </header>
 
 <main>
   <nav class="tabs" id="tabs">
-    <button data-tab="setup">Setup</button>
-    <button data-tab="news">News</button>
-    <button data-tab="paper">Paper</button>
-    <button data-tab="project">Project</button>
-    <button data-tab="person">Person</button>
+    <button data-tab="overview">Overview</button>
+    <button data-tab="papers">Papers</button>
+    <button data-tab="projects">Projects</button>
     <button data-tab="experience">Experience</button>
-    <button data-tab="teaching">Teaching</button>
-    <button data-tab="manage">Manage</button>
-    <button data-tab="files">Bio &amp; files</button>
-    <button data-tab="build">Build</button>
+    <button data-tab="education">Education</button>
+    <button data-tab="people">People</button>
+    <button data-tab="news">News</button>
+    <button data-tab="teaching">Courses</button>
+    <button data-tab="bio">Bio &amp; photo</button>
+    <button data-tab="files">Files</button>
+    <button data-tab="setup">Setup</button>
   </nav>
 
-  <!-- SETUP -->
-  <section class="panel" id="tab-setup">
-    <h2>Connect to your repository</h2>
-    <p class="hint">Everything you add here is committed to the site repository through GitHub's API. The token is stored only in this browser.</p>
-    <div class="row">
-      <div><label>GitHub user / org</label><input type="text" id="s-owner" placeholder="Aamir7693"></div>
-      <div><label>Repository</label><input type="text" id="s-repo" placeholder="Aamir7693.github.io"></div>
+  <!-- OVERVIEW -->
+  <section class="panel" id="tab-overview">
+    <div class="card">
+      <h2>What's on the site</h2>
+      <p class="hint">Click a number to jump to that section.</p>
+      <div class="stats" id="ov-stats"><p class="empty">Connect on the Setup tab to load.</p></div>
     </div>
-    <label>Fine-grained personal access token <small>— Contents: read &amp; write, this repository only</small></label>
-    <input type="password" id="s-token" placeholder="github_pat_…" autocomplete="off">
-    <details>
-      <summary>How to create the token (2 minutes)</summary>
-      <ol class="steps">
-        <li>GitHub → your avatar → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
-        <li>Name it "site dashboard". Expiration: up to 1 year. Repository access: <b>Only select repositories</b> → pick the site repo.</li>
-        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>. Everything else stays "No access".</li>
-        <li>Generate, copy the token (starts with <code>github_pat_</code>), paste it above, click <b>Test &amp; save</b>.</li>
-      </ol>
-    </details>
-    <div class="actions">
-      <button class="primary" id="s-save">Test &amp; save</button>
-      <button class="secondary" id="s-forget">Forget token</button>
+    <div class="card">
+      <h2>Recent changes</h2>
+      <div class="list commits" id="ov-commits"><p class="empty">—</p></div>
+      <div class="actions"><button class="secondary tiny" id="ov-refresh">Refresh</button><button class="secondary tiny" id="ov-rebuild">Rebuild site</button></div>
     </div>
-    <div class="msg" id="s-msg"></div>
+    <div class="card">
+      <h2>How this works</h2>
+      <p class="hint" style="margin:0">Every save makes one commit to the GitHub repo; the site rebuilds itself in about 3 minutes and the build pill in the header turns green when it's live. Images get a fresh file name on upload so you never see a stale cached copy.</p>
+    </div>
   </section>
 
-  <!-- NEWS -->
-  <section class="panel" id="tab-news">
-    <h2>Post a news item</h2>
-    <p class="hint">Shows in the news box on the home page and on /news/. Keep it to one or two lines.</p>
-    <div class="row">
-      <div><label>Date</label><input type="date" id="n-date"></div>
-      <div><label>Title <small>(optional — makes it a longer post with its own page)</small></label><input type="text" id="n-title" placeholder=""></div>
-    </div>
-    <label>Text <small>(Markdown ok — links like [text](url))</small></label>
-    <textarea id="n-text" placeholder="Our paper on … was accepted at …!"></textarea>
-    <div class="actions"><button class="primary" data-submit="news">Publish</button></div>
-    <div class="msg" id="n-msg"></div>
-  </section>
+  <!-- GENERIC CONTENT TABS are rendered by script into these panels -->
+  <section class="panel" id="tab-papers"></section>
+  <section class="panel" id="tab-projects"></section>
+  <section class="panel" id="tab-experience"></section>
+  <section class="panel" id="tab-education"></section>
+  <section class="panel" id="tab-people"></section>
+  <section class="panel" id="tab-news"></section>
+  <section class="panel" id="tab-teaching"></section>
 
-  <!-- PAPER -->
-  <section class="panel" id="tab-paper">
-    <h2>Add a paper</h2>
-    <p class="hint">Appends a BibTeX entry to <code>_bibliography/papers.bib</code>. The publications page regenerates on the next build.</p>
-    <div class="row">
-      <div><label>Type</label>
-        <select id="p-type">
-          <option value="inproceedings">Conference / workshop paper</option>
-          <option value="article">Journal article</option>
-          <option value="misc">Preprint (arXiv) / other</option>
-        </select></div>
-      <div><label>Year</label><input type="number" id="p-year" min="1990" max="2100"></div>
+  <!-- BIO & PHOTO -->
+  <section class="panel" id="tab-bio">
+    <div class="card">
+      <h2>Bio</h2>
+      <p class="hint">The paragraphs at the top of the home page. Markdown: <kbd>**bold**</kbd>, <kbd>[text](url)</kbd>. Page settings stay untouched.</p>
+      <textarea id="bio-text" style="min-height:11rem" placeholder="Click Load to fetch the current bio."></textarea>
+      <div class="actions"><button class="secondary" id="bio-load">Load</button><button class="primary" id="bio-save" disabled>Save bio</button></div>
     </div>
-    <label>Title</label><input type="text" id="p-title">
-    <label>Authors <small>— one per line, as "First Last"</small></label>
-    <textarea id="p-authors" placeholder="Aamir Hamid&#10;Roberto Yus"></textarea>
-    <div class="row">
-      <div><label>Venue <small>(conference / journal name, or "arXiv preprint")</small></label><input type="text" id="p-venue" placeholder="Proceedings of the VLDB Endowment"></div>
-      <div><label>Short venue badge <small>(abbr, e.g. VLDB)</small></label><input type="text" id="p-abbr"></div>
+    <div class="card">
+      <h2>Tagline</h2>
+      <p class="hint">The line under your name. HTML links allowed.</p>
+      <input type="text" id="bio-sub" placeholder="Click Load above to fetch">
+      <div class="actions"><button class="primary" id="bio-sub-save" disabled>Save tagline</button></div>
     </div>
-    <div class="row">
-      <div><label>arXiv ID <small>(e.g. 2401.01234)</small></label><input type="text" id="p-arxiv"></div>
-      <div><label>DOI</label><input type="text" id="p-doi"></div>
+    <div class="card">
+      <h2>Profile photo</h2>
+      <p class="hint">Square or near-square JPG/PNG; the site crops it to a circle. The new file gets a fresh name and the home page is updated to use it.</p>
+      <img id="bio-pic" class="thumb" alt="" style="display:none">
+      <input type="file" id="bio-pic-file" accept="image/jpeg,image/png,image/webp">
+      <div class="actions"><button class="primary" id="bio-pic-up">Upload photo</button></div>
     </div>
-    <div class="row">
-      <div><label>PDF URL</label><input type="url" id="p-pdf"></div>
-      <div><label>Code URL</label><input type="url" id="p-code"></div>
-    </div>
-    <div class="row">
-      <div><label>Project website URL</label><input type="url" id="p-website"></div>
-      <div><label>Award / note <small>(e.g. Oral, Best paper)</small></label><input type="text" id="p-award"></div>
-    </div>
-    <label class="check"><input type="checkbox" id="p-selected" checked> Show on home page (selected)</label>
-    <label class="check"><input type="checkbox" id="p-bib" checked> Show BIB button</label>
-    <div class="actions">
-      <button class="secondary" id="p-preview">Preview BibTeX</button>
-      <button class="primary" data-submit="paper">Add paper</button>
-    </div>
-    <pre class="preview" id="p-pre" style="display:none"></pre>
-    <div class="msg" id="p-msg"></div>
-  </section>
-
-  <!-- PROJECT -->
-  <section class="panel" id="tab-project">
-    <h2>Add a project</h2>
-    <p class="hint">Creates a card on /projects/ with its own page.</p>
-    <label>Title</label><input type="text" id="j-title">
-    <label>One-line description <small>(shown on the card)</small></label><input type="text" id="j-desc">
-    <div class="row">
-      <div><label>Order <small>(1 = first)</small></label><input type="number" id="j-imp" value="1" min="1"></div>
-      <div><label>Figure <small>(optional — PNG/JPG; becomes the card image and is shown on the page)</small></label><input type="file" id="j-file" accept="image/png,image/jpeg,image/webp"></div>
-    </div>
-    <div class="row">
-      <div><label>Figure caption <small>(optional)</small></label><input type="text" id="j-cap"></div>
-      <div><label>…or image path <small>(if the file is already in the repo)</small></label><input type="text" id="j-img" placeholder="assets/img/projects/x.png"></div>
-    </div>
-    <div class="row">
-      <div><label>Paper URL</label><input type="url" id="j-paper"></div>
-      <div><label>Code URL</label><input type="url" id="j-code"></div>
-    </div>
-    <label>Description <small>(Markdown)</small></label>
-    <textarea id="j-body" placeholder="What problem, what you did, what came out of it."></textarea>
-    <div class="actions"><button class="primary" data-submit="project">Add project</button></div>
-    <div class="msg" id="j-msg"></div>
-  </section>
-
-  <!-- PERSON -->
-  <section class="panel" id="tab-person">
-    <h2>Add a person</h2>
-    <p class="hint">Appears on /people/ under the chosen role.</p>
-    <div class="row">
-      <div><label>Name</label><input type="text" id="e-name"></div>
-      <div><label>Role</label>
-        <select id="e-role"><option>Collaborator</option><option>Mentor</option><option>Advisor</option><option>Student</option></select></div>
-    </div>
-    <div class="row">
-      <div><label>Title <small>(e.g. Assistant Professor)</small></label><input type="text" id="e-title"></div>
-      <div><label>Affiliation</label><input type="text" id="e-aff"></div>
-    </div>
-    <div class="row">
-      <div><label>Homepage URL</label><input type="url" id="e-url"></div>
-      <div><label>Photo URL <small>(optional — or upload below)</small></label><input type="url" id="e-img"></div>
-    </div>
-    <label>Upload photo <small>(optional — JPG or PNG, square works best)</small></label>
-    <input type="file" id="e-file" accept="image/jpeg,image/png">
-    <label>Note <small>(optional, e.g. "Collaborated on X")</small></label><input type="text" id="e-note">
-    <div class="actions"><button class="primary" data-submit="person">Add person</button></div>
-    <div class="msg" id="e-msg"></div>
-  </section>
-
-  <!-- EXPERIENCE / EDUCATION -->
-  <section class="panel" id="tab-experience">
-    <h2>Add experience or education</h2>
-    <p class="hint">Inserted at the top of the matching section in <code>_data/cv.yml</code> (newest first). Shows on the /cv/ page. Remember to update the PDF too.</p>
-    <label>Section</label>
-    <select id="x-kind"><option value="Experience">Work / research experience</option><option value="Education">Education</option></select>
-    <div id="x-exp">
-      <div class="row">
-        <div><label>Organisation</label><input type="text" id="x-org" placeholder="Company, lab or university"></div>
-        <div><label>Position</label><input type="text" id="x-pos" placeholder="Research Intern"></div>
+    <div class="card">
+      <h2>Social links</h2>
+      <p class="hint">Shown as icons at the bottom of the home page.</p>
+      <div class="row3">
+        <div><label>Email</label><input type="email" id="so-email"></div>
+        <div><label>Google Scholar ID</label><input type="text" id="so-scholar"></div>
+        <div><label>GitHub username</label><input type="text" id="so-github"></div>
       </div>
-    </div>
-    <div id="x-edu" style="display:none">
-      <div class="row">
-        <div><label>Institution</label><input type="text" id="x-inst"></div>
-        <div><label>Degree <small>(e.g. MSc, BSc)</small></label><input type="text" id="x-deg"></div>
+      <div class="row3">
+        <div><label>LinkedIn username</label><input type="text" id="so-linkedin"></div>
+        <div><label>ORCID</label><input type="text" id="so-orcid" placeholder="0000-0000-0000-0000"></div>
+        <div><label>X / Twitter username</label><input type="text" id="so-x"></div>
       </div>
-      <label>Field of study</label><input type="text" id="x-area" placeholder="Computer Science">
+      <div class="actions"><button class="secondary" id="so-load">Load</button><button class="primary" id="so-save" disabled>Save links</button></div>
     </div>
-    <div class="row">
-      <div><label>Location</label><input type="text" id="x-loc" placeholder="City, State"></div>
-      <div><label>Website <small>(optional)</small></label><input type="url" id="x-url"></div>
-    </div>
-    <div class="row">
-      <div><label>Start <small>(YYYY or YYYY-MM)</small></label><input type="text" id="x-start" placeholder="2023-06"></div>
-      <div><label>End <small>(YYYY, YYYY-MM or "present")</small></label><input type="text" id="x-end" placeholder="present"></div>
-    </div>
-    <label>One-line summary <small>(shown on the home-page timeline; keep it under ~150 characters)</small></label>
-    <input type="text" id="x-sum" placeholder="What you did there, in one sentence">
-    <label>Highlights <small>— one per line, shown on the CV page and when the timeline row is expanded</small></label>
-    <textarea id="x-high" placeholder="Built …&#10;Published …&#10;(pasting bullets from your CV works too)"></textarea>
-    <div class="row">
-      <div><label>Logo <small>(optional — PNG/JPG/SVG)</small></label><input type="file" id="x-logo" accept="image/png,image/jpeg,image/svg+xml"></div>
-      <div><label>…or logo URL</label><input type="url" id="x-logo-url"></div>
-    </div>
-    <div class="actions"><button class="primary" data-submit="experience">Add to CV</button></div>
-    <div class="msg" id="x-msg"></div>
-  </section>
-
-  <!-- TEACHING -->
-  <section class="panel" id="tab-teaching">
-    <h2>Add a course</h2>
-    <p class="hint">Listed on /teaching/ grouped by year.</p>
-    <label>Course title</label><input type="text" id="t-title" placeholder="CMSC 461 Database Management Systems">
-    <div class="row">
-      <div><label>Your role</label><input type="text" id="t-role" placeholder="Teaching assistant"></div>
-      <div><label>Institution</label><input type="text" id="t-loc" value="UMBC"></div>
-    </div>
-    <div class="row">
-      <div><label>Term</label><select id="t-term"><option>Fall</option><option>Spring</option><option>Summer</option><option>Winter</option></select></div>
-      <div><label>Year</label><input type="number" id="t-year" min="2000" max="2100"></div>
-    </div>
-    <label>Description <small>(one or two sentences)</small></label>
-    <textarea id="t-desc"></textarea>
-    <div class="actions"><button class="primary" data-submit="teaching">Add course</button></div>
-    <div class="msg" id="t-msg"></div>
   </section>
 
   <!-- FILES -->
   <section class="panel" id="tab-files">
-    <h2>Bio, CV, photo and any file</h2>
-    <p class="hint">Upload your CV PDF and profile photo, or open any text file in the repo and edit it in place.</p>
-
-    <label>CV (PDF) → <code>assets/pdf/cv.pdf</code> <small>— until you upload one, the site serves a PDF generated from your CV data on every build</small></label>
-    <input type="file" id="f-cv" accept="application/pdf">
-    <div class="actions"><button class="primary" id="f-cv-up">Upload CV</button></div>
-    <div class="msg" id="f-cv-msg"></div>
-
-    <label>Profile photo (JPG, square) → <code>assets/img/aamir-headshot.jpg</code></label>
-    <input type="file" id="f-pic" accept="image/jpeg">
-    <div class="actions"><button class="primary" id="f-pic-up">Upload photo</button></div>
-    <div class="msg" id="f-pic-msg"></div>
-
-    <label>Upload any file to a path <small>(logos, project images, paper PDFs)</small></label>
-    <div class="row">
-      <div><input type="file" id="f-any"></div>
-      <div><input type="text" id="f-any-path" placeholder="assets/img/logos/umbc.png"></div>
+    <div class="card">
+      <h2>CV PDF</h2>
+      <p class="hint" id="cv-status">—</p>
+      <input type="file" id="cv-file" accept="application/pdf">
+      <div class="actions"><button class="primary" id="cv-up">Upload my CV</button><button class="secondary danger" id="cv-remove">Remove uploaded PDF (use auto-generated)</button></div>
     </div>
-    <div class="actions"><button class="primary" id="f-any-up">Upload file</button></div>
-    <div class="msg" id="f-any-msg"></div>
-
-    <label>Edit a text file</label>
-    <div class="row">
-      <div>
-        <select id="f-path">
-          <option value="_pages/about.md">_pages/about.md (bio / home page)</option>
-          <option value="_data/cv.yml">_data/cv.yml (CV summary)</option>
-          <option value="_data/socials.yml">_data/socials.yml (links &amp; email)</option>
-          <option value="_data/people.yml">_data/people.yml (people page)</option>
-          <option value="_bibliography/papers.bib">_bibliography/papers.bib (publications)</option>
+    <div class="card">
+      <h2>Upload any file</h2>
+      <p class="hint">Logos, images, PDFs. Give the path inside the repo, e.g. <kbd>assets/img/logos/umbc.png</kbd>.</p>
+      <div class="row"><div><input type="file" id="f-any"></div><div><input type="text" id="f-any-path" placeholder="assets/img/…"></div></div>
+      <div class="actions"><button class="primary" id="f-any-up">Upload</button></div>
+    </div>
+    <div class="card">
+      <h2>Edit any text file</h2>
+      <p class="hint">For anything the forms don't cover. Careful with YAML indentation.</p>
+      <div class="row">
+        <div><select id="f-path">
+          <option value="_data/cv.yml">_data/cv.yml (CV data)</option>
+          <option value="_data/socials.yml">_data/socials.yml</option>
+          <option value="_data/people.yml">_data/people.yml</option>
+          <option value="_data/venues.yml">_data/venues.yml (venue badges)</option>
+          <option value="_bibliography/papers.bib">_bibliography/papers.bib</option>
+          <option value="_pages/about.md">_pages/about.md (home page)</option>
           <option value="_config.yml">_config.yml (site settings)</option>
           <option value="__custom">other path…</option>
-        </select>
+        </select></div>
+        <div><input type="text" id="f-custom" placeholder="_projects/02_privacylens.md" style="display:none"></div>
       </div>
-      <div><input type="text" id="f-custom" placeholder="_projects/1_example_project.md" style="display:none"></div>
+      <div class="actions"><button class="secondary" id="f-load">Load</button><button class="primary" id="f-save" disabled>Save</button></div>
+      <textarea class="code" id="f-text" spellcheck="false"></textarea>
     </div>
-    <div class="actions">
-      <button class="secondary" id="f-load">Load</button>
-      <button class="primary" id="f-save" disabled>Save</button>
-    </div>
-    <textarea class="code" id="f-text" spellcheck="false" placeholder="Click Load to fetch the file."></textarea>
-    <div class="msg" id="f-msg"></div>
-  </section>
-  <!-- MANAGE -->
-  <section class="panel" id="tab-manage">
-    <h2>Edit or delete existing items</h2>
-    <p class="hint">Pick a category and load the list. Edit opens the item's text so you can change any field; Delete removes it. Each save or delete is one commit.</p>
-    <div class="row">
-      <div>
-        <select id="m-kind">
-          <option value="news">News</option>
-          <option value="papers">Papers</option>
-          <option value="projects">Projects</option>
-          <option value="teaching">Courses</option>
-          <option value="people">People</option>
-          <option value="experience">Experience (CV)</option>
-          <option value="education">Education (CV)</option>
-        </select>
-      </div>
-      <div><button class="secondary" id="m-load" style="margin-top:0">Load list</button></div>
-    </div>
-    <div id="m-list" style="margin-top:.8rem"></div>
-    <div id="m-editor" style="display:none; margin-top:1rem">
-      <label id="m-what">Editing</label>
-      <textarea class="code" id="m-text" spellcheck="false"></textarea>
-      <div class="actions">
-        <button class="primary" id="m-save">Save changes</button>
-        <button class="secondary" id="m-cancel">Cancel</button>
-      </div>
-      <details style="margin-top:.6rem">
-        <summary>Attach an image (optional)</summary>
-        <div class="row">
-          <div><label>Image file <small id="m-img-hint">(uploads it and fills the matching field in the text above — then click Save changes)</small></label><input type="file" id="m-img" accept="image/png,image/jpeg,image/svg+xml,image/webp"></div>
-          <div><label>&nbsp;</label><button class="secondary" id="m-img-up" style="margin-top:0">Upload &amp; insert</button></div>
-        </div>
-      </details>
-    </div>
-    <div class="msg" id="m-msg"></div>
   </section>
 
-  <!-- BUILD -->
-  <section class="panel" id="tab-build">
-    <h2>Build status</h2>
-    <p class="hint">Every commit from this dashboard starts a build automatically (about 3 minutes). Use this tab to watch it, or to re-run the build without changing anything.</p>
-    <div class="actions">
-      <button class="secondary" id="b-refresh">Refresh status</button>
-      <button class="primary" id="b-run">Rebuild now</button>
+  <!-- SETUP -->
+  <section class="panel" id="tab-setup">
+    <div class="card">
+      <h2>Connect to your repository</h2>
+      <p class="hint">Changes are committed through GitHub's API. The token is stored only in this browser.</p>
+      <div class="row">
+        <div><label>GitHub user / org</label><input type="text" id="s-owner"></div>
+        <div><label>Repository</label><input type="text" id="s-repo"></div>
+      </div>
+      <label>Fine-grained personal access token <small>— Contents: read &amp; write; Actions: read (for the build pill) — this repository only</small></label>
+      <input type="password" id="s-token" placeholder="github_pat_…" autocomplete="off">
+      <details><summary>How to create or edit the token</summary>
+        <ol class="steps">
+          <li>GitHub → avatar → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b>.</li>
+          <li>Repository access: <b>Only select repositories</b> → the site repo.</li>
+          <li>Repository permissions → <b>Contents: Read and write</b>, <b>Actions: Read and write</b> (lets the dashboard show build status and trigger rebuilds).</li>
+          <li>Generate / Save, paste here, <b>Test &amp; save</b>.</li>
+        </ol></details>
+      <div class="actions"><button class="primary" id="s-save">Test &amp; save</button><button class="secondary" id="s-forget">Forget token</button></div>
     </div>
-    <div class="msg" id="b-msg"></div>
-    <div id="b-list" style="margin-top:.8rem"></div>
-    <details>
-      <summary>Needs one extra token permission</summary>
-      <ol class="steps">
-        <li>GitHub → Settings → Developer settings → Fine-grained tokens → your "site dashboard" token → <b>Edit</b>.</li>
-        <li>Repository permissions → <b>Actions: Read and write</b> → Save. (Contents stays Read and write.)</li>
-      </ol>
-    </details>
   </section>
 </main>
+<div id="toasts"></div>
 
 <script>
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
-  const LS_KEY = 'site-dashboard-v1';
+  const LS = 'site-dashboard-v1';
   const S = { owner: 'Aamir7693', repo: 'Aamir7693.github.io', branch: 'main', token: '' };
 
-  // ---------- storage ----------
-  function loadSettings() {
-    try { Object.assign(S, JSON.parse(localStorage.getItem(LS_KEY) || '{}')); } catch (e) {}
-    $('s-owner').value = S.owner; $('s-repo').value = S.repo; $('s-token').value = S.token || '';
-    updateLinks();
-  }
-  function saveSettings() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
-  function updateLinks() {
-    $('lnk-repo').href = `https://github.com/${S.owner}/${S.repo}`;
-    $('lnk-actions').href = `https://github.com/${S.owner}/${S.repo}/actions`;
-  }
-
-  // ---------- tabs ----------
-  const tabs = $('tabs');
-  tabs.addEventListener('click', (e) => {
-    const b = e.target.closest('button'); if (!b) return;
-    showTab(b.dataset.tab);
-  });
-  function showTab(name) {
-    [...tabs.querySelectorAll('button')].forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-    [...document.querySelectorAll('section.panel')].forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
-    try { localStorage.setItem(LS_KEY + ':tab', name); } catch (e) {}
-  }
-
-  // ---------- helpers ----------
-  const msg = (id, kind, html) => { const m = $(id); m.className = 'msg ' + kind; m.innerHTML = html; };
-  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // ---------- small utils ----------
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const today = () => new Date().toISOString().slice(0, 10);
   const slug = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 60) || 'item';
-  const yq = (v) => JSON.stringify(String(v)); // JSON string == valid double-quoted YAML scalar
-  const bib = (v) => String(v).replace(/[{}]/g, ''); // keep braces balanced inside BibTeX fields
+  const yq = (v) => JSON.stringify(String(v));
+  const bibv = (v) => String(v).replace(/[{}]/g, '');
   const lines = (s) => String(s).split(/\r?\n/).map(x => x.trim()).filter(Boolean);
-  // Highlights: one per line normally; if the text contains bullet markers (pasted from a CV), each marker starts a
-  // new item and unmarked lines are wrapped continuations of the previous one.
-  const bullets = (s) => {
-    const raw = String(s).split(/\r?\n/).map(x => x.trim()).filter(Boolean);
-    const mark = /^[\u2022\u25E6\u25AA\u00B7\-\*]\s*/;
-    if (!raw.some(l => mark.test(l))) return raw;
-    const out = [];
-    for (const l of raw) { if (mark.test(l) || !out.length) out.push(l.replace(mark, '')); else out[out.length - 1] += ' ' + l; }
-    return out.map(x => x.trim()).filter(Boolean);
-  };
-  function b64utf8(str) { const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b)); return btoa(bin); }
-  function utf8b64(b64) { const bin = atob(b64.replace(/\n/g, '')); const bytes = Uint8Array.from(bin, c => c.charCodeAt(0)); return new TextDecoder().decode(bytes); }
-  function fileToB64(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
-  function need(v, label) { if (!String(v || '').trim()) throw new Error(label + ' is required.'); return String(v).trim(); }
+  const bullets = (s) => { const raw = lines(s); const mark = /^[•◦▪·\-\*]\s*/; if (!raw.some(l => mark.test(l))) return raw; const out = []; for (const l of raw) { if (mark.test(l) || !out.length) out.push(l.replace(mark, '')); else out[out.length - 1] += ' ' + l; } return out.map(x => x.trim()).filter(Boolean); };
+  const unq = (v) => { v = String(v ?? '').trim(); if (/^".*"$/.test(v)) { try { return JSON.parse(v); } catch (e) { return v.slice(1, -1); } } if (/^'.*'$/.test(v)) return v.slice(1, -1); return v.replace(/\s+#.*$/, ''); };
+  const b64utf8 = (str) => { const b = new TextEncoder().encode(str); let s = ''; b.forEach(x => s += String.fromCharCode(x)); return btoa(s); };
+  const utf8b64 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, '')), c => c.charCodeAt(0)));
+  const fileToB64 = (file) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
+  const need = (v, label) => { if (!String(v ?? '').trim()) throw new Error(label + ' is required.'); return String(v).trim(); };
+  const stamp = () => Date.now().toString(36).slice(-5);
+  const extOf = (file) => ({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/svg+xml': 'svg', 'image/webp': 'webp', 'application/pdf': 'pdf' }[file.type] || (file.name.split('.').pop() || 'bin').toLowerCase());
 
-  // al-folio figure block for project pages
-  const figureBlock = (path, caption) => `<div class="row">\n  <div class="col-sm mt-3 mt-md-0">\n    {% include figure.liquid loading="eager" path="${path}" title="${(caption || '').replace(/"/g, "'")}" class="img-fluid rounded z-depth-1" %}\n  </div>\n</div>${caption ? `\n<div class="caption">\n  ${caption}\n</div>` : ''}\n`;
+  function toast(kind, html, ms = 7000) {
+    const t = document.createElement('div'); t.className = 'toast ' + kind; t.innerHTML = html; $('toasts').appendChild(t);
+    setTimeout(() => t.remove(), ms); return t;
+  }
+  async function run(btn, fn) {
+    if (btn) btn.disabled = true;
+    try { await fn(); } catch (e) { toast('bad', esc(e.message || e), 12000); console.error(e); } finally { if (btn) btn.disabled = false; }
+  }
+
+  // ---------- settings ----------
+  function loadSettings() { try { Object.assign(S, JSON.parse(localStorage.getItem(LS) || '{}')); } catch (e) {} $('s-owner').value = S.owner; $('s-repo').value = S.repo; $('s-token').value = S.token || ''; $('lnk-repo').href = `https://github.com/${S.owner}/${S.repo}`; }
+  function saveSettings() { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} }
 
   // ---------- GitHub API ----------
   async function gh(path, opts = {}) {
-    if (!S.token) throw new Error('Not connected — open the Setup tab and save a token.');
+    if (!S.token) throw new Error('Not connected — open Setup and save a token.');
     const base = `https://api.github.com/repos/${encodeURIComponent(S.owner)}/${encodeURIComponent(S.repo)}`;
     let res;
-    try {
-      res = await fetch(path ? `${base}/${path}` : base, {
-        method: opts.method || 'GET',
-        body: opts.body,
-        headers: { Authorization: 'Bearer ' + S.token, Accept: 'application/vnd.github+json', ...(opts.headers || {}) },
-      });
-    } catch (e) {
-      throw new Error('Could not reach api.github.com from this browser (network error). Check for an ad blocker or privacy extension blocking the request, or try another browser.');
-    }
+    try { res = await fetch(path ? `${base}/${path}` : base, { method: opts.method || 'GET', body: opts.body, headers: { Authorization: 'Bearer ' + S.token, Accept: 'application/vnd.github+json', ...(opts.body ? { 'Content-Type': 'application/json' } : {}) } }); }
+    catch (e) { throw new Error('Could not reach api.github.com (network error — ad blocker or offline?).'); }
     if (res.status === 404 && opts.allow404) return null;
+    if (res.status === 204) return {};
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(`GitHub ${res.status}: ${data.message || 'request failed'}`);
     return data;
   }
-  async function getFile(path) {
-    const d = await gh(`contents/${encodeURI(path)}?ref=${S.branch}`, { allow404: true });
-    if (!d) return null;
-    return { sha: d.sha, text: utf8b64(d.content) };
-  }
+  const getFile = async (path) => { const d = await gh(`contents/${encodeURI(path)}?ref=${S.branch}`, { allow404: true }); return d ? { sha: d.sha, text: d.encoding === 'base64' ? utf8b64(d.content) : '', size: d.size } : null; };
+  const fileExists = async (path) => !!(await gh(`contents/${encodeURI(path)}?ref=${S.branch}`, { allow404: true }));
   async function putFile(path, contentB64, message, sha) {
-    const body = { message, content: contentB64, branch: S.branch };
-    if (sha) body.sha = sha;
-    const d = await gh(`contents/${encodeURI(path)}`, { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
-    return d.commit && d.commit.html_url;
+    const body = { message, content: contentB64, branch: S.branch }; if (sha) body.sha = sha;
+    const d = await gh(`contents/${encodeURI(path)}`, { method: 'PUT', body: JSON.stringify(body) });
+    noteCommit(d.commit && d.commit.html_url); return d.commit && d.commit.html_url;
   }
-  async function createNew(path, text, message) {
-    const existing = await getFile(path);
-    if (existing) throw new Error(`A file already exists at ${path}. Change the title/date to get a different file name.`);
-    return putFile(path, b64utf8(text), message);
-  }
-  async function appendTo(path, extra, message, isDuplicate) {
-    const f = await getFile(path);
-    if (!f) throw new Error(`${path} not found in the repository.`);
-    if (isDuplicate && isDuplicate(f.text)) throw new Error(`Already in ${path} — nothing added. To change it, open Bio & files, load ${path} and edit it there.`);
-    const text = f.text.replace(/\s*$/, '') + '\n\n' + extra.replace(/\s*$/, '') + '\n';
-    return putFile(path, b64utf8(text), message, f.sha);
-  }
-  const norm = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  function done(id, url, what) {
-    msg(id, 'ok', `${esc(what)} committed${url ? ` (<a href="${esc(url)}" target="_blank">view commit</a>)` : ''}. The site rebuilds in about 3 minutes — <a href="${esc($('lnk-actions').href)}" target="_blank">watch the build</a>.`);
-  }
-  async function run(id, btn, fn) {
-    msg(id, 'info', 'Working…'); if (btn) btn.disabled = true;
-    try { await fn(); } catch (e) { msg(id, 'bad', esc(e.message || e)); } finally { if (btn) btn.disabled = false; }
+  async function deleteFile(path, sha, message) { const d = await gh(`contents/${encodeURI(path)}`, { method: 'DELETE', body: JSON.stringify({ message, sha, branch: S.branch }) }); noteCommit(d.commit && d.commit.html_url); }
+  async function listDir(dir) { const d = await gh(`contents/${dir}?ref=${S.branch}`, { allow404: true }); return (d || []).filter(f => f.type === 'file'); }
+  // upload a binary with a fresh, cache-safe name: <dir>/<base>-<stamp>.<ext>
+  async function uploadFresh(file, dir, base) {
+    const path = `${dir}/${slug(base)}-${stamp()}.${extOf(file)}`;
+    await putFile(path, await fileToB64(file), `Upload ${path}`);
+    return path;
   }
 
-  // ---------- setup ----------
-  $('s-save').addEventListener('click', (ev) => run('s-msg', ev.target, async () => {
-    S.owner = need($('s-owner').value, 'GitHub user'); S.repo = need($('s-repo').value, 'Repository'); S.token = need($('s-token').value, 'Token');
-    const d = await gh('');
-    if (!d.permissions || !d.permissions.push) throw new Error('Token works but has no write access to this repository. Give it Contents: Read and write.');
-    saveSettings(); updateLinks(); setConn(true, d.full_name);
-    msg('s-msg', 'ok', `Connected to ${esc(d.full_name)} with write access. You can use the other tabs now.`);
+  // ---------- build status ----------
+  let lastCommitAt = 0, buildTimer = null, actionsOK = true;
+  function setPill(id, cls, text) { const p = $(id); p.className = 'pill ' + cls; p.querySelector('span:last-child').textContent = text; }
+  function noteCommit(url) { lastCommitAt = Date.now(); setPill('build', 'warn busy', 'build: queued'); if (url) toast('ok', `Committed — <a href="${esc(url)}" target="_blank">view</a>. Live in ~3 min.`); scheduleBuildCheck(); }
+  function scheduleBuildCheck() { clearTimeout(buildTimer); buildTimer = setTimeout(checkBuild, 25000); }
+  async function checkBuild() {
+    if (!S.token) return;
+    if (!actionsOK) { // no Actions permission: time-based estimate
+      const mins = (Date.now() - lastCommitAt) / 60000;
+      if (lastCommitAt && mins < 3.5) { setPill('build', 'warn busy', `build: ~${Math.max(1, Math.ceil(3.5 - mins))} min left`); scheduleBuildCheck(); }
+      else setPill('build', lastCommitAt ? 'ok' : '', lastCommitAt ? 'build: probably live' : 'build: needs Actions permission');
+      return;
+    }
+    try {
+      const d = await gh('actions/runs?per_page=3');
+      const r = (d.workflow_runs || []).find(x => x.name === 'Deploy site') || (d.workflow_runs || [])[0];
+      if (!r) { setPill('build', '', 'build: none yet'); return; }
+      const when = new Date(r.created_at); const ago = Math.round((Date.now() - when) / 60000);
+      if (r.status !== 'completed') { setPill('build', 'warn busy', `building… (started ${ago} min ago)`); scheduleBuildCheck(); }
+      else if (r.conclusion === 'success') { setPill('build', 'ok', `live · built ${ago < 1 ? 'just now' : ago + ' min ago'}`); if (lastCommitAt && when < lastCommitAt) { setPill('build', 'warn busy', 'build: queued'); scheduleBuildCheck(); } }
+      else { setPill('build', 'bad', `build failed — ${r.conclusion}`); toast('bad', `The last build failed (<a href="${esc(r.html_url)}" target="_blank">log</a>). Usually a YAML/BibTeX typo in the last change.`, 15000); }
+    } catch (e) { if (/403|404/.test(e.message)) { actionsOK = false; checkBuild(); } }
+  }
+  $('ov-rebuild').addEventListener('click', (e) => run(e.target, async () => {
+    try { await gh('actions/workflows/deploy.yml/dispatches', { method: 'POST', body: JSON.stringify({ ref: S.branch }) }); }
+    catch (err) { throw new Error(err.message + ' — rebuilding needs Actions: Read and write on the token (Setup tab).'); }
+    lastCommitAt = Date.now(); setPill('build', 'warn busy', 'building…'); toast('ok', 'Rebuild started.'); scheduleBuildCheck();
   }));
-  $('s-forget').addEventListener('click', () => { S.token = ''; $('s-token').value = ''; saveSettings(); setConn(false); msg('s-msg', 'info', 'Token removed from this browser.'); });
-  function setConn(ok, name) { const c = $('conn'); c.className = ok ? 'ok' : 'bad'; c.textContent = ok ? `connected · ${name}` : 'not connected'; }
-  async function checkConn() { if (!S.token) { setConn(false); return; } try { const d = await gh(''); setConn(!!(d.permissions && d.permissions.push), d.full_name); } catch (e) { setConn(false); } }
 
-  // ---------- builders ----------
-  const builders = {
-    news: async () => {
-      const date = need($('n-date').value, 'Date'), text = need($('n-text').value, 'Text'), title = $('n-title').value.trim();
-      const name = `_news/${date}-${slug(title || text.split(/\s+/).slice(0, 6).join(' '))}.md`;
-      const fm = ['---', 'layout: post', ...(title ? [`title: ${yq(title)}`] : []), `date: ${date} 12:00:00-0400`, `inline: ${title ? 'false' : 'true'}`, 'related_posts: false', '---', '', text, ''].join('\n');
-      const url = await createNew(name, fm, `News: ${title || text.slice(0, 60)}`);
-      done('n-msg', url, 'News item'); $('n-text').value = ''; $('n-title').value = '';
+  // ---------- tabs ----------
+  const tabs = $('tabs');
+  function showTab(name) {
+    [...tabs.querySelectorAll('button')].forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    [...document.querySelectorAll('section.panel')].forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+    try { localStorage.setItem(LS + ':tab', name); } catch (e) {}
+    if (S.token) { if (KINDS[name]) refreshList(name); if (name === 'overview') loadOverview(); if (name === 'files') cvStatus(); }
+  }
+  tabs.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) showTab(b.dataset.tab); });
+
+  // ---------- content kinds ----------
+  // Each kind: where its items live, how to list/parse/serialize them, and its form fields.
+  const F = (id, label, type = 'text', extra = {}) => ({ id, label, type, ...extra });
+  const KINDS = {
+    papers: {
+      title: 'Papers', path: '_bibliography/papers.bib', kind: 'blocks', start: /^@\w+\{/gm, imgDir: 'assets/img/publication_preview', imgField: 'preview',
+      label: b => { const f = parseBib(b); return [f.title || b.split('\n')[0], f.year ? `(${f.year})` : ''].join(' '); },
+      sub: b => { const f = parseBib(b); return (f.booktitle || f.journal || '') ; },
+      fields: [F('type', 'Type', 'select', { options: [['inproceedings', 'Conference / workshop paper'], ['article', 'Journal article'], ['misc', 'Preprint / other']] }), F('year', 'Year', 'number'),
+        F('title', 'Title', 'text', { full: true }), F('author', 'Authors — one per line, "First Last"', 'textarea', { full: true }),
+        F('venue', 'Venue (conference / journal name, or "arXiv preprint arXiv:…")'), F('abbr', 'Venue badge (e.g. PETS)'),
+        F('arxiv', 'arXiv ID (e.g. 2401.01234)'), F('doi', 'DOI'), F('pdf', 'PDF URL', 'url'), F('code', 'Code URL', 'url'), F('website', 'Project website URL', 'url'), F('award', 'Award / note (e.g. Oral)'),
+        F('selected', 'Show on home page', 'check', { def: true }), F('bibtex_show', 'Show BIB button', 'check', { def: true })],
+      image: 'Thumbnail (optional, shown next to the entry)',
+      parse: (b) => { const f = parseBib(b); return { type: f._type, year: f.year, title: f.title, author: (f.author || '').split(/\s+and\s+/).map(a => a.includes(',') ? a.split(',').reverse().map(x => x.trim()).join(' ') : a.trim()).join('\n'), venue: f.booktitle || f.journal || '', abbr: f.abbr, arxiv: f.arxiv, doi: f.doi, pdf: f.pdf, code: f.code, website: f.website, award: f.award, selected: f.selected === 'true', bibtex_show: f.bibtex_show === 'true', preview: f.preview, _key: f._key }; },
+      serialize: (v, old) => {
+        const title = need(v.title, 'Title'), year = need(v.year, 'Year'), authors = lines(v.author); if (!authors.length) throw new Error('At least one author is required.');
+        const venue = need(v.venue, 'Venue'); const type = v.type || 'inproceedings';
+        const key = old && old._key ? old._key : `${(authors[0].split(/\s+/).pop() || 'paper').toLowerCase().replace(/[^a-z]/g, '')}${year}${slug(title).split('-')[0]}`;
+        const out = []; const add = (k, val) => { if (String(val ?? '').trim()) out.push(`  ${k.padEnd(11)} = {${bibv(String(val).trim())}},`); };
+        add('abbr', v.abbr); add('title', title); add('author', authors.join(' and ')); if (type === 'inproceedings') add('booktitle', venue); else add('journal', venue); add('year', year);
+        add('doi', String(v.doi || '').replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')); add('arxiv', String(v.arxiv || '').replace(/^https?:\/\/arxiv\.org\/(abs|pdf)\//i, '').replace(/(v\d+)?(\.pdf)?$/, ''));
+        add('pdf', v.pdf); add('code', v.code); add('website', v.website); add('award', v.award); add('preview', v.preview);
+        if (v.selected) add('selected', 'true'); if (v.bibtex_show) add('bibtex_show', 'true');
+        return { text: `@${type}{${key},\n${out.join('\n')}\n}`, msg: `Paper: ${title.slice(0, 60)}` };
+      },
+      dup: (text, v, old) => !old && [...text.matchAll(/title\s*=\s*\{([^}]*)\}/g)].some(m => norm(m[1]) === norm(v.title)),
     },
-    paper: async () => {
-      const entry = buildBib();
-      const key = entry.slice(entry.indexOf('{') + 1, entry.indexOf(','));
-      const title = norm($('p-title').value);
-      const dup = (text) => text.includes(`{${key},`) || [...text.matchAll(/title\s*=\s*\{([^}]*)\}/g)].some(m => norm(m[1]) === title);
-      const url = await appendTo('_bibliography/papers.bib', entry, `Add paper: ${$('p-title').value.trim().slice(0, 70)}`, dup);
-      done('p-msg', url, 'Paper');
+    projects: {
+      title: 'Projects', dir: '_projects', kind: 'files', imgDir: 'assets/img/projects', imgField: 'img',
+      label: f => f.front.title || f.name, sub: f => f.front.description || '',
+      fields: [F('title', 'Title', 'text', { full: true }), F('description', 'One-line description (shown on the card)', 'text', { full: true }), F('importance', 'Order (1 = first)', 'number', { def: 1 }), F('body', 'Page text (Markdown)', 'textarea', { full: true, rows: 10 })],
+      image: 'Figure (optional — card image and shown at the top of the page)',
+      parse: (f) => ({ title: f.front.title, description: f.front.description, importance: f.front.importance || 1, img: f.front.img, _related: f.front.related_publications, body: f.body.replace(/^\s*<div class="row">[\s\S]*?<\/div>\s*(<div class="caption">[\s\S]*?<\/div>)?\s*/m, '').trim(), _figure: (f.body.match(/<div class="row">[\s\S]*?<\/div>\s*(<div class="caption">[\s\S]*?<\/div>)?/m) || [''])[0] }),
+      serialize: (v, old) => {
+        const title = need(v.title, 'Title'), desc = need(v.description, 'Description'), imp = parseInt(v.importance || '1', 10) || 1;
+        const fig = v.img ? (old && old._figure && old._figure.includes(v.img) ? old._figure : figureBlock(v.img, '')) : '';
+        const text = ['---', 'layout: page', `title: ${yq(title)}`, `description: ${yq(desc)}`, `img: ${v.img ? yq(v.img) : ''}`, `importance: ${imp}`, `related_publications: ${old && String(old._related) === 'true' ? 'true' : 'false'}`, '---', '', fig, v.body || '', ''].join('\n').replace(/\n{3,}/g, '\n\n');
+        return { text, name: `${String(imp).padStart(2, '0')}_${slug(title)}.md`, msg: `Project: ${title.slice(0, 60)}` };
+      },
     },
-    project: async () => {
-      const title = need($('j-title').value, 'Title'), desc = need($('j-desc').value, 'Description'), imp = parseInt($('j-imp').value || '1', 10) || 1;
-      let img = $('j-img').value.trim();
-      const paper = $('j-paper').value.trim(), code = $('j-code').value.trim(), body = $('j-body').value.trim(), cap = $('j-cap').value.trim();
-      const fig = $('j-file').files[0];
-      if (fig) {
-        if (fig.size > 5 * 1024 * 1024) throw new Error('Figure is larger than 5 MB — please resize it.');
-        const ext = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' }[fig.type] || 'png';
-        img = `assets/img/projects/${slug(title)}.${ext}`;
-        const existingFig = await getFile(img).catch(() => null);
-        await putFile(img, await fileToB64(fig), `Project figure: ${img}`, existingFig && existingFig.sha);
-      }
-      const figure = img ? figureBlock(img, cap) : '';
-      const links = [paper && `- **Paper:** <${paper}>`, code && `- **Code:** <${code}>`].filter(Boolean).join('\n');
-      const fm = ['---', 'layout: page', `title: ${yq(title)}`, `description: ${yq(desc)}`, `img: ${img ? yq(img) : ''}`, `importance: ${imp}`, 'related_publications: false', '---', '', figure, body, '', links, ''].filter((l, i, a) => !(l === '' && a[i - 1] === '')).join('\n');
-      const url = await createNew(`_projects/${String(imp).padStart(2, '0')}_${slug(title)}.md`, fm, `Add project: ${title.slice(0, 60)}`);
-      done('j-msg', url, 'Project');
+    experience: {
+      title: 'Experience', path: '_data/cv.yml', kind: 'section', section: 'Experience', start: /^      - /gm, imgDir: 'assets/img/logos', imgField: 'logo',
+      label: b => { const f = parseYaml(b); return [f.position, f.company].filter(Boolean).join(' — '); }, sub: b => { const f = parseYaml(b); return [f.start_date, f.end_date].filter(Boolean).join(' → ') + (f.location ? ' · ' + f.location : ''); },
+      fields: [F('company', 'Organisation'), F('position', 'Position'), F('location', 'Location'), F('url', 'Website', 'url'), F('start_date', 'Start (YYYY or YYYY-MM)'), F('end_date', 'End (YYYY, YYYY-MM or present)', 'text', { def: 'present' }),
+        F('summary', 'One-line summary (home-page timeline)', 'text', { full: true }), F('highlights', 'Highlights — one per line (bullets pasted from a CV work too)', 'textarea', { full: true })],
+      image: 'Logo (optional — shown on the timeline, logo strip and CV)',
+      parse: (b) => { const f = parseYaml(b); return { ...f, highlights: (f.highlights || []).join('\n') }; },
+      serialize: (v) => {
+        const org = need(v.company, 'Organisation'), pos = need(v.position, 'Position'), start = need(v.start_date, 'Start');
+        const i = '      ', j = '        '; const o = [`${i}- company: ${yq(org)}`];
+        if (v.logo) o.push(`${j}logo: ${yq(v.logo)}`); if (v.abbr) o.push(`${j}abbr: ${yq(v.abbr)}`);
+        o.push(`${j}position: ${yq(pos)}`); if (v.summary) o.push(`${j}summary: ${yq(v.summary)}`); if (v.location) o.push(`${j}location: ${yq(v.location)}`); if (v.url) o.push(`${j}url: ${yq(v.url)}`);
+        o.push(`${j}start_date: ${yq(start)}`, `${j}end_date: ${yq(v.end_date || 'present')}`);
+        const h = bullets(v.highlights || ''); if (h.length) o.push(`${j}highlights:`, ...h.map(x => `${j}  - ${yq(x)}`));
+        return { text: o.join('\n'), msg: `CV: ${pos} at ${org}` };
+      },
     },
-    person: async () => {
-      const name = need($('e-name').value, 'Name'), role = $('e-role').value;
-      let image = $('e-img').value.trim();
-      const photo = $('e-file').files[0];
-      if (photo) {
-        if (photo.size > 5 * 1024 * 1024) throw new Error('Photo is larger than 5 MB — please resize it.');
-        const ext = photo.type === 'image/png' ? 'png' : 'jpg';
-        image = `assets/img/people/${slug(name)}.${ext}`;
-        const existing = await getFile(image).catch(() => null);
-        await putFile(image, await fileToB64(photo), `People: photo for ${name}`, existing && existing.sha);
-      }
-      const fields = { role, title: $('e-title').value, affiliation: $('e-aff').value, url: $('e-url').value, image, note: $('e-note').value };
-      let block = `- name: ${yq(name)}`;
-      for (const [k, v] of Object.entries(fields)) if (String(v).trim()) block += `\n  ${k}: ${yq(String(v).trim())}`;
-      const url = await appendTo('_data/people.yml', block, `People: add ${name}`, (text) => text.includes(`- name: ${yq(name)}`));
-      done('e-msg', url, name); $('e-name').value = '';
+    education: {
+      title: 'Education', path: '_data/cv.yml', kind: 'section', section: 'Education', start: /^      - /gm, imgDir: 'assets/img/logos', imgField: 'logo',
+      label: b => { const f = parseYaml(b); return [f.studyType, f.area ? 'in ' + f.area : '', '—', f.institution].filter(Boolean).join(' '); }, sub: b => { const f = parseYaml(b); return [f.start_date, f.end_date].filter(Boolean).join(' → '); },
+      fields: [F('institution', 'Institution'), F('studyType', 'Degree (PhD, MS, BSc…)'), F('area', 'Field of study'), F('location', 'Location'), F('url', 'Website', 'url'), F('start_date', 'Start (YYYY)'), F('end_date', 'End (YYYY or present)'),
+        F('summary', 'One-line summary (home-page timeline)', 'text', { full: true }), F('highlights', 'Highlights — one per line (advisor, thesis, honours)', 'textarea', { full: true })],
+      image: 'Logo (optional)',
+      parse: (b) => { const f = parseYaml(b); return { ...f, highlights: (f.highlights || []).join('\n') }; },
+      serialize: (v) => {
+        const inst = need(v.institution, 'Institution'), deg = need(v.studyType, 'Degree'), start = need(v.start_date, 'Start');
+        const i = '      ', j = '        '; const o = [`${i}- institution: ${yq(inst)}`];
+        if (v.abbr) o.push(`${j}abbr: ${yq(v.abbr)}`); if (v.logo) o.push(`${j}logo: ${yq(v.logo)}`);
+        if (v.location) o.push(`${j}location: ${yq(v.location)}`); if (v.url) o.push(`${j}url: ${yq(v.url)}`); if (v.area) o.push(`${j}area: ${yq(v.area)}`);
+        o.push(`${j}studyType: ${yq(deg)}`); if (v.summary) o.push(`${j}summary: ${yq(v.summary)}`);
+        o.push(`${j}start_date: ${yq(start)}`, `${j}end_date: ${yq(v.end_date || 'present')}`);
+        const h = bullets(v.highlights || ''); if (h.length) o.push(`${j}highlights:`, ...h.map(x => `${j}  - ${yq(x)}`));
+        return { text: o.join('\n'), msg: `CV: ${deg} at ${inst}` };
+      },
     },
-    experience: async () => {
-      const kind = $('x-kind').value, loc = $('x-loc').value.trim(), site = $('x-url').value.trim();
-      const start = need($('x-start').value, 'Start'), end = $('x-end').value.trim() || 'present', highs = bullets($('x-high').value);
-      const ind = '      ', sub = '        ';
-      let block;
-      if (kind === 'Experience') {
-        const org = need($('x-org').value, 'Organisation'), pos = need($('x-pos').value, 'Position');
-        block = [`${ind}- company: ${yq(org)}`, `${sub}position: ${yq(pos)}`];
-      } else {
-        const inst = need($('x-inst').value, 'Institution'), deg = need($('x-deg').value, 'Degree'), area = $('x-area').value.trim();
-        block = [`${ind}- institution: ${yq(inst)}`, `${sub}studyType: ${yq(deg)}`, ...(area ? [`${sub}area: ${yq(area)}`] : [])];
-      }
-      let logo = $('x-logo-url').value.trim();
-      const logoFile = $('x-logo').files[0];
-      if (logoFile) {
-        if (logoFile.size > 2 * 1024 * 1024) throw new Error('Logo is larger than 2 MB — please use a smaller image.');
-        const ext = logoFile.type === 'image/png' ? 'png' : logoFile.type === 'image/svg+xml' ? 'svg' : 'jpg';
-        logo = `assets/img/logos/${slug(kind === 'Experience' ? $('x-org').value : $('x-inst').value)}.${ext}`;
-        const existingLogo = await getFile(logo).catch(() => null);
-        await putFile(logo, await fileToB64(logoFile), `CV: logo ${logo}`, existingLogo && existingLogo.sha);
-      }
-      const summary = $('x-sum').value.trim();
-      if (summary) block.splice(2, 0, `${sub}summary: ${yq(summary)}`);
-      if (logo) block.splice(1, 0, `${sub}logo: ${yq(logo)}`);
-      if (loc) block.push(`${sub}location: ${yq(loc)}`);
-      if (site) block.push(`${sub}url: ${yq(site)}`);
-      block.push(`${sub}start_date: ${yq(start)}`, `${sub}end_date: ${yq(end)}`);
-      if (highs.length) block.push(`${sub}highlights:`, ...highs.map(h => `${sub}  - ${yq(h)}`));
-      const f = await getFile('_data/cv.yml'); if (!f) throw new Error('_data/cv.yml not found.');
-      if (f.text.includes(block[0].trim()) && f.text.includes(block[1].trim())) throw new Error(`That ${kind.toLowerCase()} entry already exists in _data/cv.yml — nothing added. Edit it under Bio & files if needed.`);
-      const re = new RegExp(`^(    ${kind}:[ \\t]*\\n)`, 'm');
-      if (!re.test(f.text)) throw new Error(`Could not find a "    ${kind}:" section in _data/cv.yml — add it under sections: first.`);
-      const text = f.text.replace(re, `$1${block.join('\n')}\n\n`);
-      const url = await putFile('_data/cv.yml', b64utf8(text), `CV: add ${kind.toLowerCase()} entry`, f.sha);
-      done('x-msg', url, kind + ' entry');
+    people: {
+      title: 'People', path: '_data/people.yml', kind: 'blocks', start: /^- name:/gm, imgDir: 'assets/img/people', imgField: 'image',
+      label: b => { const f = parseYaml(b); return `${f.name} (${f.role || '?'})`; }, sub: b => { const f = parseYaml(b); return [f.title, f.affiliation].filter(Boolean).join(', '); },
+      fields: [F('name', 'Name'), F('role', 'Role', 'select', { options: [['Advisor', 'Advisor'], ['Mentor', 'Mentor'], ['Collaborator', 'Collaborator'], ['Student', 'Student']] }), F('title', 'Title (e.g. Assistant Professor)'), F('affiliation', 'Affiliation'), F('url', 'Homepage', 'url'), F('note', 'Note (e.g. "Collaborated on X")')],
+      image: 'Photo (optional)',
+      parse: (b) => parseYaml(b),
+      serialize: (v) => { const name = need(v.name, 'Name'); const o = [`- name: ${yq(name)}`]; for (const k of ['role', 'title', 'affiliation', 'url', 'image', 'note']) if (String(v[k] || '').trim()) o.push(`  ${k}: ${yq(String(v[k]).trim())}`); return { text: o.join('\n'), msg: `People: ${name}` }; },
+      dup: (text, v, old) => !old && text.includes(`- name: ${yq(v.name)}`),
     },
-    teaching: async () => {
-      const title = need($('t-title').value, 'Course title'), year = need($('t-year').value, 'Year'), term = $('t-term').value;
-      const fm = ['---', 'layout: course', `title: ${yq(title)}`, `description: ${yq($('t-desc').value.trim())}`, `instructor: ${yq($('t-role').value.trim() || 'Teaching assistant')}`, `year: ${parseInt(year, 10)}`, `term: ${term}`, `location: ${yq($('t-loc').value.trim())}`, `course_id: ${slug(title)}`, '---', ''].join('\n');
-      const url = await createNew(`_teachings/${year}-${term.toLowerCase()}-${slug(title)}.md`, fm, `Teaching: add ${title.slice(0, 60)}`);
-      const tp = await getFile('_pages/teaching.md');
-      if (tp && /^nav: false/m.test(tp.text)) await putFile('_pages/teaching.md', b64utf8(tp.text.replace(/^nav: false/m, 'nav: true')), 'Teaching: show page in the menu', tp.sha);
-      done('t-msg', url, 'Course');
+    news: {
+      title: 'News', dir: '_news', kind: 'files',
+      label: f => (f.front.title || f.body.trim().split('\n')[0] || f.name).slice(0, 90), sub: f => (f.front.date || '').slice(0, 10),
+      fields: [F('date', 'Date', 'date', { def: today() }), F('title', 'Title (optional — makes a longer post with its own page)'), F('body', 'Text (Markdown)', 'textarea', { full: true })],
+      parse: (f) => ({ date: (f.front.date || '').slice(0, 10), title: f.front.title, body: f.body.trim() }),
+      serialize: (v) => { const date = need(v.date, 'Date'), body = need(v.body, 'Text'); const title = (v.title || '').trim();
+        const text = ['---', 'layout: post', ...(title ? [`title: ${yq(title)}`] : []), `date: ${date} 12:00:00-0400`, `inline: ${title ? 'false' : 'true'}`, 'related_posts: false', '---', '', body, ''].join('\n');
+        return { text, name: `${date}-${slug(title || body.split(/\s+/).slice(0, 6).join(' '))}.md`, msg: `News: ${(title || body).slice(0, 60)}` }; },
+    },
+    teaching: {
+      title: 'Courses', dir: '_teachings', kind: 'files',
+      label: f => f.front.title || f.name, sub: f => [f.front.term, f.front.year, f.front.instructor].filter(Boolean).join(' · '),
+      fields: [F('title', 'Course title', 'text', { full: true }), F('instructor', 'Your role (e.g. Teaching assistant)'), F('location', 'Institution', 'text', { def: 'UMBC' }), F('term', 'Term', 'select', { options: [['Fall', 'Fall'], ['Spring', 'Spring'], ['Summer', 'Summer'], ['Winter', 'Winter']] }), F('year', 'Year', 'number', { def: new Date().getFullYear() }), F('description', 'Description', 'textarea', { full: true })],
+      parse: (f) => ({ ...f.front }),
+      serialize: (v) => { const title = need(v.title, 'Course title'), year = need(v.year, 'Year'); const term = v.term || 'Fall';
+        const text = ['---', 'layout: course', `title: ${yq(title)}`, `description: ${yq(v.description || '')}`, `instructor: ${yq(v.instructor || 'Teaching assistant')}`, `year: ${parseInt(year, 10)}`, `term: ${term}`, `location: ${yq(v.location || '')}`, `course_id: ${slug(title)}`, '---', ''].join('\n');
+        return { text, name: `${year}-${term.toLowerCase()}-${slug(title)}.md`, msg: `Teaching: ${title.slice(0, 60)}`, after: enableTeachingNav }; },
     },
   };
-  const panelMsg = { news: 'n-msg', paper: 'p-msg', project: 'j-msg', person: 'e-msg', experience: 'x-msg', teaching: 't-msg' };
-  document.querySelectorAll('button[data-submit]').forEach(b => b.addEventListener('click', () => run(panelMsg[b.dataset.submit], b, builders[b.dataset.submit])));
+  const norm = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const figureBlock = (path, caption) => `<div class="row">\n  <div class="col-sm mt-3 mt-md-0">\n    {% include figure.liquid loading="eager" path="${path}" title="${(caption || '').replace(/"/g, "'")}" class="img-fluid rounded z-depth-1" %}\n  </div>\n</div>${caption ? `\n<div class="caption">\n  ${caption}\n</div>` : ''}\n`;
+  async function enableTeachingNav() { const tp = await getFile('_pages/teaching.md'); if (tp && /^nav: false/m.test(tp.text)) await putFile('_pages/teaching.md', b64utf8(tp.text.replace(/^nav: false/m, 'nav: true')), 'Teaching: show page in the menu', tp.sha); }
 
-  function buildBib() {
-    const type = $('p-type').value, title = need($('p-title').value, 'Title'), year = need($('p-year').value, 'Year');
-    const authors = lines($('p-authors').value); if (!authors.length) throw new Error('At least one author is required.');
-    const venue = need($('p-venue').value, 'Venue');
-    const last = (authors[0].split(/\s+/).pop() || 'paper').toLowerCase().replace(/[^a-z]/g, '');
-    const key = `${last}${year}${slug(title).split('-')[0]}`;
-    const f = [];
-    const add = (k, v) => { if (String(v || '').trim()) f.push(`  ${k.padEnd(11)} = {${bib(String(v).trim())}},`); };
-    add('abbr', $('p-abbr').value);
-    add('title', title);
-    add('author', authors.join(' and '));
-    if (type === 'inproceedings') add('booktitle', venue); else add('journal', venue);
-    add('year', year);
-    add('doi', $('p-doi').value.trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')); add('arxiv', $('p-arxiv').value.trim().replace(/^https?:\/\/arxiv\.org\/(abs|pdf)\//i, '').replace(/(v\d+)?(\.pdf)?$/, '')); add('pdf', $('p-pdf').value); add('code', $('p-code').value); add('website', $('p-website').value); add('award', $('p-award').value);
-    if ($('p-selected').checked) add('selected', 'true');
-    if ($('p-bib').checked) add('bibtex_show', 'true');
-    return `@${type}{${key},\n${f.join('\n')}\n}`;
+  // ---------- parsers ----------
+  function parseBib(b) {
+    const f = {}; const m = b.match(/^@(\w+)\s*\{\s*([^,\s]+)\s*,/); if (m) { f._type = m[1].toLowerCase(); f._key = m[2]; }
+    for (const fm of b.matchAll(/^\s*(\w+)\s*=\s*(\{((?:[^{}]|\{[^{}]*\})*)\}|"([^"]*)"|(\d+))\s*,?\s*$/gm)) f[fm[1].toLowerCase()] = (fm[3] ?? fm[4] ?? fm[5] ?? '').trim();
+    return f;
   }
-  $('p-preview').addEventListener('click', () => { try { const p = $('p-pre'); p.textContent = buildBib(); p.style.display = 'block'; msg('p-msg', 'info', ''); $('p-msg').style.display = 'none'; } catch (e) { msg('p-msg', 'bad', esc(e.message)); } });
+  // flat "key: value" block (one entry of a YAML list) + optional "highlights:" list
+  function parseYaml(b) {
+    const f = {}; let listKey = null;
+    for (const raw of b.split('\n')) {
+      const line = raw.replace(/^\s*-\s+/, (m, o) => ' '.repeat(m.length)); // first line "- key:" → treat as "key:"
+      const li = line.match(/^\s+-\s+(.*)$/);
+      if (listKey && li) { f[listKey].push(unq(li[1])); continue; }
+      const kv = line.match(/^\s*([\w]+):\s*(.*)$/);
+      if (!kv) continue;
+      if (kv[2].trim() === '') { listKey = kv[1]; f[listKey] = []; } else { listKey = null; f[kv[1]] = unq(kv[2]); }
+    }
+    return f;
+  }
+  function parseFile(text) {
+    const m = text.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/); if (!m) return { front: {}, body: text };
+    const front = {}; for (const l of m[1].split('\n')) { const kv = l.match(/^([\w]+):\s*(.*)$/); if (kv) front[kv[1]] = unq(kv[2]); }
+    return { front, body: m[2] };
+  }
+  function splitBlocks(K, text) {
+    let from = 0, to = text.length;
+    if (K.kind === 'section') { const m = text.match(new RegExp(`^    ${K.section}:[ \\t]*\\n`, 'm')); if (!m) throw new Error(`No "${K.section}:" section in ${K.path}.`); from = m.index + m[0].length; const next = text.slice(from).match(/^    [A-Za-z]/m); to = next ? from + next.index : text.length; }
+    const region = text.slice(from, to); const starts = []; const re = new RegExp(K.start.source, 'gm'); let mm;
+    while ((mm = re.exec(region)) !== null) { starts.push(mm.index); if (mm.index === re.lastIndex) re.lastIndex++; }
+    return starts.map((st, i) => ({ from: from + st, to: from + (i + 1 < starts.length ? starts[i + 1] : region.length), text: region.slice(st, i + 1 < starts.length ? starts[i + 1] : region.length) }));
+  }
 
-  // ---------- experience form toggle ----------
-  $('x-kind').addEventListener('change', () => { const edu = $('x-kind').value === 'Education'; $('x-exp').style.display = edu ? 'none' : ''; $('x-edu').style.display = edu ? '' : 'none'; });
-
-  // ---------- files ----------
-  async function upload(inputId, path, msgId, btn) {
-    await run(msgId, btn, async () => {
-      const file = $(inputId).files[0]; if (!file) throw new Error('Choose a file first.');
-      if (file.size > 20 * 1024 * 1024) throw new Error('File is larger than 20 MB.');
-      const existing = await getFile(path).catch(() => null);
-      const url = await putFile(path, await fileToB64(file), `Update ${path}`, existing && existing.sha);
-      done(msgId, url, file.name);
+  // ---------- generic content tab ----------
+  const state = {}; // per kind: { items, editing }
+  function renderKind(name) {
+    const K = KINDS[name]; const p = $('tab-' + name);
+    const fieldHtml = K.fields.map(f => {
+      const id = `${name}-${f.id}`; let ctl;
+      if (f.type === 'select') ctl = `<select id="${id}">${f.options.map(o => `<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('')}</select>`;
+      else if (f.type === 'textarea') ctl = `<textarea id="${id}" ${f.rows ? `style="min-height:${f.rows * 1.4}rem"` : ''}></textarea>`;
+      else if (f.type === 'check') return `<label class="check"><input type="checkbox" id="${id}"> ${esc(f.label)}</label>`;
+      else ctl = `<input type="${f.type}" id="${id}">`;
+      return `<div ${f.full ? 'style="grid-column:1/-1"' : ''}><label>${esc(f.label)}</label>${ctl}</div>`;
+    }).join('');
+    p.innerHTML = `
+      <div class="card"><h2>${esc(K.title)}</h2><div class="list" id="${name}-list"><p class="empty">Loading…</p></div>
+        <div class="actions"><button class="secondary tiny" data-act="refresh">Refresh list</button></div></div>
+      <div class="card"><h2 id="${name}-formtitle">Add ${esc(K.title.toLowerCase().replace(/s$/, ''))}</h2>
+        <div class="row">${fieldHtml}</div>
+        ${K.image ? `<div class="figwrap"><label style="margin-top:0">${esc(K.image)}</label><img class="thumb" id="${name}-imgthumb" alt="" style="display:none"><input type="file" id="${name}-imgfile" accept="image/png,image/jpeg,image/svg+xml,image/webp"><input type="hidden" id="${name}-imgpath"><div id="${name}-imgnote" class="hint" style="margin:.3rem 0 0"></div></div>` : ''}
+        <div class="actions"><button class="primary" data-act="save">Save</button><button class="secondary" data-act="cancel" style="display:none">Cancel edit</button></div>
+        <details class="raw"><summary>Edit as raw text instead</summary><textarea class="code" id="${name}-raw" spellcheck="false" placeholder="Shown when you click Edit on an item."></textarea><div class="actions"><button class="secondary" data-act="saveraw">Save raw text</button></div></details>
+      </div>`;
+    p.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      const act = b.dataset.act;
+      if (act === 'refresh') run(b, () => refreshList(name));
+      if (act === 'save') run(b, () => saveForm(name));
+      if (act === 'saveraw') run(b, () => saveRaw(name));
+      if (act === 'cancel') resetForm(name);
+      if (b.dataset.edit !== undefined) run(b, () => startEdit(name, +b.dataset.edit));
+      if (b.dataset.del !== undefined) { const it = state[name].items[+b.dataset.del]; if (confirm(`Delete "${it.label}"? This makes a commit removing it.`)) run(b, async () => { await removeItem(name, it); toast('ok', `Deleted "${esc(it.label)}".`); await refreshList(name); }); }
     });
+    resetForm(name);
   }
-  $('f-cv-up').addEventListener('click', (e) => upload('f-cv', 'assets/pdf/cv.pdf', 'f-cv-msg', e.target));
-  $('f-pic-up').addEventListener('click', (e) => upload('f-pic', 'assets/img/aamir-headshot.jpg', 'f-pic-msg', e.target));
-  $('f-any-up').addEventListener('click', (e) => {
-    const p = $('f-any-path').value.trim().replace(/^\/+/, '');
-    if (!p || p.includes('..')) { msg('f-any-msg', 'bad', 'Enter a path inside the repo, e.g. assets/img/logos/umbc.png'); return; }
-    upload('f-any', p, 'f-any-msg', e.target);
-  });
+  function resetForm(name) {
+    const K = KINDS[name]; state[name] = state[name] || {}; state[name].editing = null;
+    for (const f of K.fields) { const el = $(`${name}-${f.id}`); if (!el) continue; if (f.type === 'check') el.checked = !!f.def; else el.value = f.def ?? (f.type === 'select' ? f.options[0][0] : ''); }
+    if (K.image) { $(`${name}-imgfile`).value = ''; $(`${name}-imgpath`).value = ''; $(`${name}-imgthumb`).style.display = 'none'; $(`${name}-imgnote`).textContent = ''; }
+    $(`${name}-formtitle`).textContent = `Add ${K.title.toLowerCase().replace(/s$/, '')}`; $(`${name}-raw`).value = '';
+    const p = $('tab-' + name); p.querySelector('[data-act="cancel"]').style.display = 'none';
+  }
+  async function loadItems(name) {
+    const K = KINDS[name];
+    if (K.kind === 'files') { const files = await listDir(K.dir); const items = []; for (const f of files.filter(x => /\.md$/.test(x.name))) { const t = utf8b64((await gh(`contents/${encodeURI(f.path)}?ref=${S.branch}`)).content); const pf = parseFile(t); items.push({ path: f.path, name: f.name, sha: f.sha, text: t, parsed: pf, label: K.label(pf), sub: K.sub ? K.sub(pf) : '' }); } items.sort((a, b) => a.name < b.name ? 1 : -1); if (name === 'projects') items.sort((a, b) => (a.parsed.front.importance || 99) - (b.parsed.front.importance || 99)); return items; }
+    const f = await getFile(K.path); if (!f) throw new Error(`${K.path} not found.`);
+    return splitBlocks(K, f.text).map(b => ({ text: b.text, label: K.label(b.text) || '(untitled)', sub: K.sub ? K.sub(b.text) : '' }));
+  }
+  async function refreshList(name) {
+    const K = KINDS[name]; const list = $(`${name}-list`); list.innerHTML = '<p class="empty">Loading…</p>';
+    try { state[name].items = await loadItems(name); } catch (e) { list.innerHTML = `<p class="empty">${esc(e.message)}</p>`; return; }
+    list.innerHTML = state[name].items.length ? state[name].items.map((it, i) => `<div class="item"><div class="lbl">${esc(it.label)}${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</div><button class="secondary tiny" data-edit="${i}">Edit</button><button class="secondary tiny danger" data-del="${i}">Delete</button></div>`).join('') : `<p class="empty">Nothing here yet — add the first one below.</p>`;
+  }
+  async function startEdit(name, idx) {
+    const K = KINDS[name]; const it = state[name].items[idx]; state[name].editing = it;
+    const v = K.kind === 'files' ? K.parse(it.parsed) : K.parse(it.text); state[name].old = v;
+    for (const f of K.fields) { const el = $(`${name}-${f.id}`); if (!el) continue; if (f.type === 'check') el.checked = !!v[f.id]; else el.value = v[f.id] ?? ''; }
+    if (K.image) { const cur = v[K.imgField]; $(`${name}-imgpath`).value = cur || ''; const th = $(`${name}-imgthumb`); if (cur) { th.src = '/' + String(cur).replace(/^\//, '') + (name === 'papers' ? '' : ''); th.src = name === 'papers' ? `/assets/img/publication_preview/${cur}` : '/' + String(cur).replace(/^\//, ''); th.style.display = ''; } else th.style.display = 'none'; $(`${name}-imgnote`).textContent = cur ? `Current: ${cur}. Choose a file to replace it.` : ''; }
+    $(`${name}-formtitle`).textContent = `Editing: ${it.label}`; $(`${name}-raw`).value = it.text;
+    $('tab-' + name).querySelector('[data-act="cancel"]').style.display = '';
+    $(`${name}-formtitle`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function readForm(name) { const K = KINDS[name]; const v = {}; for (const f of K.fields) { const el = $(`${name}-${f.id}`); if (!el) continue; v[f.id] = f.type === 'check' ? el.checked : el.value; } if (K.image) v[K.imgField] = $(`${name}-imgpath`).value || ''; if (state[name].old) { for (const k of ['abbr', 'logo', 'image', 'img', 'preview', '_key', '_figure', '_related']) if (state[name].old[k] !== undefined && v[k] === undefined) v[k] = state[name].old[k]; } return v; }
+  async function maybeUploadImage(name, v) {
+    const K = KINDS[name]; if (!K.image) return; const file = $(`${name}-imgfile`).files[0]; if (!file) return;
+    if (file.size > 5 * 1024 * 1024) throw new Error('Image is larger than 5 MB — please resize it.');
+    const base = v.title || v.name || v.company || v.institution || 'image';
+    const path = await uploadFresh(file, K.imgDir, base);
+    v[K.imgField] = name === 'papers' ? path.split('/').pop() : path; $(`${name}-imgpath`).value = v[K.imgField];
+  }
+  async function saveForm(name) {
+    const K = KINDS[name]; const v = readForm(name); const old = state[name].old; const editing = state[name].editing;
+    await maybeUploadImage(name, v);
+    const out = K.serialize(v, old);
+    if (K.kind === 'files') {
+      if (editing) { await putFile(editing.path, b64utf8(out.text), `Edit ${editing.path}`, editing.sha); }
+      else { const path = `${K.dir}/${out.name}`; if (await fileExists(path)) throw new Error(`${path} already exists — change the title or date.`); await putFile(path, b64utf8(out.text), out.msg); if (out.after) await out.after(); }
+    } else {
+      const f = await getFile(K.path); if (!f) throw new Error(`${K.path} not found.`);
+      if (editing) { const { b } = locate(K, f.text, editing, name); const text = f.text.slice(0, b.from) + out.text.replace(/\s*$/, '') + '\n\n' + f.text.slice(b.to).replace(/^\s*\n/, ''); await putFile(K.path, b64utf8(text.replace(/\n{3,}/g, '\n\n')), `Edit: ${out.msg}`, f.sha); }
+      else {
+        if (K.dup && K.dup(f.text, v, old)) throw new Error('That item is already there — edit it from the list instead.');
+        let text;
+        if (K.kind === 'section') { const re = new RegExp(`^(    ${K.section}:[ \\t]*\\n)`, 'm'); if (!re.test(f.text)) throw new Error(`No "${K.section}:" section in ${K.path}.`); text = f.text.replace(re, `$1${out.text}\n\n`); }
+        else text = f.text.replace(/\s*$/, '') + '\n\n' + out.text + '\n';
+        await putFile(K.path, b64utf8(text), out.msg, f.sha);
+      }
+    }
+    toast('ok', `${editing ? 'Updated' : 'Added'}: ${esc(out.msg.replace(/^[^:]+:\s*/, ''))}`); resetForm(name); await refreshList(name);
+  }
+  async function saveRaw(name) {
+    const K = KINDS[name]; const editing = state[name].editing; const raw = $(`${name}-raw`).value; if (!editing) throw new Error('Click Edit on an item first.'); if (!raw.trim()) throw new Error('Use Delete to remove an item.');
+    if (K.kind === 'files') await putFile(editing.path, b64utf8(raw), `Edit ${editing.path}`, editing.sha);
+    else { const f = await getFile(K.path); const { b } = locate(K, f.text, editing, name); const text = f.text.slice(0, b.from) + raw.replace(/\s*$/, '') + '\n\n' + f.text.slice(b.to).replace(/^\s*\n/, ''); await putFile(K.path, b64utf8(text.replace(/\n{3,}/g, '\n\n')), `Edit ${editing.label.slice(0, 50)}`, f.sha); }
+    toast('ok', 'Saved.'); resetForm(name); await refreshList(name);
+  }
+  function locate(K, text, it, name) {
+    const blocks = splitBlocks(K, text); const items = state[name].items; const nth = items.slice(0, items.indexOf(it)).filter(x => x.label === it.label).length;
+    const b = blocks.filter(x => (K.label(x.text) || '(untitled)') === it.label)[nth]; if (!b) throw new Error('That item changed since the list was loaded — refresh the list and try again.'); return { b };
+  }
+  async function removeItem(name, it) {
+    const K = KINDS[name];
+    if (K.kind === 'files') { await deleteFile(it.path, it.sha, `Delete ${it.path}`); return; }
+    const f = await getFile(K.path); const { b } = locate(K, f.text, it, name);
+    await putFile(K.path, b64utf8((f.text.slice(0, b.from) + f.text.slice(b.to)).replace(/\n{3,}/g, '\n\n')), `Delete "${it.label.slice(0, 50)}" from ${K.path}`, f.sha);
+  }
+  // live thumbnail when choosing an image
+  document.addEventListener('change', (e) => { const inp = e.target; if (inp.type === 'file' && inp.id.endsWith('-imgfile') && inp.files[0]) { const name = inp.id.replace('-imgfile', ''); const th = $(`${name}-imgthumb`); th.src = URL.createObjectURL(inp.files[0]); th.style.display = ''; $(`${name}-imgnote`).textContent = 'Will be uploaded when you click Save.'; } });
 
-  let loadedSha = null, loadedPath = null;
+  // ---------- overview ----------
+  async function loadOverview() {
+    const st = $('ov-stats'); st.innerHTML = '<p class="empty">Loading…</p>';
+    const counts = {};
+    await Promise.all(Object.keys(KINDS).map(async k => { try { counts[k] = (await loadItems(k)).length; } catch (e) { counts[k] = '?'; } }));
+    st.innerHTML = Object.keys(KINDS).map(k => `<div class="stat" data-go="${k}"><b>${counts[k]}</b><span>${esc(KINDS[k].title)}</span></div>`).join('');
+    st.querySelectorAll('.stat').forEach(el => el.addEventListener('click', () => showTab(el.dataset.go)));
+    try { const c = await gh('commits?per_page=8'); $('ov-commits').innerHTML = c.map(x => `<div class="item"><div class="lbl">${esc(x.commit.message.split('\n')[0])}<small>${esc(new Date(x.commit.author.date).toLocaleString())}</small></div><a href="${esc(x.html_url)}" target="_blank">view</a></div>`).join(''); } catch (e) { $('ov-commits').innerHTML = `<p class="empty">${esc(e.message)}</p>`; }
+    checkBuild();
+  }
+  $('ov-refresh').addEventListener('click', (e) => run(e.target, loadOverview));
+
+  // ---------- bio & photo ----------
+  let aboutFile = null;
+  const bioSplit = (text) => { const m = text.match(/^(---\s*\n[\s\S]*?\n---\s*\n)([\s\S]*)$/); return m ? { front: m[1], body: m[2] } : { front: '', body: text }; };
+  $('bio-load').addEventListener('click', (e) => run(e.target, async () => {
+    aboutFile = await getFile('_pages/about.md'); if (!aboutFile) throw new Error('_pages/about.md not found.');
+    const { front, body } = bioSplit(aboutFile.text);
+    // bio = paragraphs between the style include and the logo strip include
+    const m = body.match(/\{%\s*include home\/style\.liquid\s*%\}\s*\n([\s\S]*?)\n\s*\{%\s*include home\/logos\.liquid/); $('bio-text').value = (m ? m[1] : body).trim(); $('bio-save').disabled = false;
+    const sm = front.match(/^subtitle:\s*(.*)$/m); $('bio-sub').value = sm ? sm[1] : ''; $('bio-sub-save').disabled = false;
+    const im = front.match(/^\s*image:\s*(\S+)/m); if (im) { $('bio-pic').src = '/assets/img/' + im[1]; $('bio-pic').style.display = ''; }
+    toast('info', 'Loaded. Edit and click Save.', 3000);
+  }));
+  $('bio-save').addEventListener('click', (e) => run(e.target, async () => {
+    const f = await getFile('_pages/about.md'); const { front, body } = bioSplit(f.text);
+    const re = /(\{%\s*include home\/style\.liquid\s*%\}\s*\n)([\s\S]*?)(\n\s*\{%\s*include home\/logos\.liquid)/;
+    if (!re.test(body)) throw new Error('Could not find the bio section in about.md — use Files → Edit any text file.');
+    const text = front + body.replace(re, (m, a, b, c) => a + '\n' + $('bio-text').value.trim() + '\n' + c);
+    await putFile('_pages/about.md', b64utf8(text), 'Update bio', f.sha); toast('ok', 'Bio saved.');
+  }));
+  $('bio-sub-save').addEventListener('click', (e) => run(e.target, async () => {
+    const f = await getFile('_pages/about.md'); if (!/^subtitle:/m.test(f.text)) throw new Error('No subtitle line found.');
+    await putFile('_pages/about.md', b64utf8(f.text.replace(/^subtitle:.*$/m, 'subtitle: ' + $('bio-sub').value.trim())), 'Update tagline', f.sha); toast('ok', 'Tagline saved.');
+  }));
+  $('bio-pic-up').addEventListener('click', (e) => run(e.target, async () => {
+    const file = $('bio-pic-file').files[0]; if (!file) throw new Error('Choose an image first.'); if (file.size > 8 * 1024 * 1024) throw new Error('Photo is larger than 8 MB.');
+    const path = await uploadFresh(file, 'assets/img', 'profile');
+    const f = await getFile('_pages/about.md'); const nm = path.split('/').pop();
+    let text = f.text.replace(/^(\s*image:\s*)\S+/m, `$1${nm}`); await putFile('_pages/about.md', b64utf8(text), 'Update profile photo', f.sha);
+    const cfg = await getFile('_config.yml'); if (cfg && /^og_image:/m.test(cfg.text)) await putFile('_config.yml', b64utf8(cfg.text.replace(/^og_image:\s*\S+/m, `og_image: /${path}`)), 'Update share image', cfg.sha);
+    $('bio-pic').src = URL.createObjectURL(file); $('bio-pic').style.display = ''; toast('ok', 'Photo uploaded and linked.');
+  }));
+  const SOC = { email: 'so-email', scholar_userid: 'so-scholar', github_username: 'so-github', linkedin_username: 'so-linkedin', orcid_id: 'so-orcid', x_username: 'so-x' };
+  $('so-load').addEventListener('click', (e) => run(e.target, async () => {
+    const f = await getFile('_data/socials.yml'); const d = parseYaml(f.text.replace(/^#.*$/gm, '')); for (const [k, id] of Object.entries(SOC)) $(id).value = d[k] || ''; $('so-save').disabled = false; toast('info', 'Loaded.', 2500);
+  }));
+  $('so-save').addEventListener('click', (e) => run(e.target, async () => {
+    const f = await getFile('_data/socials.yml'); let text = f.text;
+    for (const [k, id] of Object.entries(SOC)) { const val = $(id).value.trim(); const re = new RegExp(`^#?\\s*${k}:.*$`, 'm'); if (re.test(text)) text = text.replace(re, val ? `${k}: ${val}` : `# ${k}:`); else if (val) text = text.replace(/\s*$/, '') + `\n${k}: ${val}\n`; }
+    await putFile('_data/socials.yml', b64utf8(text), 'Update social links', f.sha); toast('ok', 'Links saved.');
+  }));
+
+  // ---------- files tab ----------
+  async function cvStatus() { try { const f = await getFile('assets/pdf/cv.pdf'); $('cv-status').innerHTML = f ? `An uploaded CV is being served (${Math.round(f.size / 1024)} KB). Upload a new one to replace it, or remove it to go back to the auto-generated PDF.` : 'No uploaded CV — the site serves a PDF <b>generated from your Experience, Education, Papers and Skills</b> on every build. Upload your own to override it.'; $('cv-remove').style.display = f ? '' : 'none'; } catch (e) { $('cv-status').textContent = e.message; } }
+  $('cv-up').addEventListener('click', (e) => run(e.target, async () => { const file = $('cv-file').files[0]; if (!file) throw new Error('Choose a PDF first.'); const ex = await getFile('assets/pdf/cv.pdf'); await putFile('assets/pdf/cv.pdf', await fileToB64(file), 'Upload CV', ex && ex.sha); toast('ok', 'CV uploaded.'); cvStatus(); }));
+  $('cv-remove').addEventListener('click', (e) => run(e.target, async () => { const ex = await getFile('assets/pdf/cv.pdf'); if (!ex) return; if (!confirm('Remove the uploaded CV and serve the auto-generated one?')) return; await deleteFile('assets/pdf/cv.pdf', ex.sha, 'Remove uploaded CV (use generated PDF)'); toast('ok', 'Removed — the next build generates the PDF.'); cvStatus(); }));
+  $('f-any-up').addEventListener('click', (e) => run(e.target, async () => { const file = $('f-any').files[0]; const p = $('f-any-path').value.trim().replace(/^\/+/, ''); if (!file) throw new Error('Choose a file first.'); if (!p || p.includes('..')) throw new Error('Enter a path inside the repo.'); if (file.size > 20 * 1024 * 1024) throw new Error('File is larger than 20 MB.'); const ex = await getFile(p).catch(() => null); await putFile(p, await fileToB64(file), `Upload ${p}`, ex && ex.sha); toast('ok', `Uploaded ${esc(p)}${ex ? ' (replaced; may take ~10 min to refresh in browsers)' : ''}.`); }));
+  let fLoaded = null;
   const curPath = () => $('f-path').value === '__custom' ? need($('f-custom').value, 'Path') : $('f-path').value;
   $('f-path').addEventListener('change', () => { $('f-custom').style.display = $('f-path').value === '__custom' ? '' : 'none'; });
-  $('f-load').addEventListener('click', (e) => run('f-msg', e.target, async () => {
-    const p = curPath(); const f = await getFile(p); if (!f) throw new Error(`${p} not found.`);
-    $('f-text').value = f.text; loadedSha = f.sha; loadedPath = p; $('f-save').disabled = false;
-    msg('f-msg', 'info', `Loaded ${esc(p)}. Edit below and click Save.`);
-  }));
-  $('f-save').addEventListener('click', (e) => run('f-msg', e.target, async () => {
-    if (!loadedPath) throw new Error('Load a file first.');
-    const url = await putFile(loadedPath, b64utf8($('f-text').value), `Edit ${loadedPath}`, loadedSha);
-    const f = await getFile(loadedPath); loadedSha = f && f.sha;
-    done('f-msg', url, loadedPath);
-  }));
+  $('f-load').addEventListener('click', (e) => run(e.target, async () => { const p = curPath(); const f = await getFile(p); if (!f) throw new Error(`${p} not found.`); $('f-text').value = f.text; fLoaded = { path: p, sha: f.sha }; $('f-save').disabled = false; toast('info', `Loaded ${esc(p)}.`, 2500); }));
+  $('f-save').addEventListener('click', (e) => run(e.target, async () => { if (!fLoaded) throw new Error('Load a file first.'); await putFile(fLoaded.path, b64utf8($('f-text').value), `Edit ${fLoaded.path}`, fLoaded.sha); const f = await getFile(fLoaded.path); fLoaded.sha = f && f.sha; toast('ok', `Saved ${esc(fLoaded.path)}.`); }));
 
-  // ---------- manage tab ----------
-  const firstVal = (block, key) => { const m = block.match(new RegExp('^\\s*-?\\s*' + key + ':\\s*(.*)$', 'm')); if (!m) return ''; let v = m[1].trim(); if (!/^"/.test(v)) v = v.replace(/\s+#.*$/, ''); return v.replace(/^"(.*)"$/, '$1').trim(); };
-  const sources = {
-    news:      { kind: 'files', dir: '_news' },
-    projects:  { kind: 'files', dir: '_projects' },
-    teaching:  { kind: 'files', dir: '_teachings' },
-    people:    { kind: 'blocks', path: '_data/people.yml', start: /^- name:/gm, label: b => firstVal(b, 'name') + (firstVal(b, 'role') ? ` (${firstVal(b, 'role')})` : '') },
-    papers:    { kind: 'blocks', path: '_bibliography/papers.bib', start: /^@\w+\{/gm, label: b => { const t = b.match(/title\s*=\s*\{([^}]*)\}/); const y = b.match(/year\s*=\s*\{([^}]*)\}/); return (t ? t[1] : b.split('\n')[0]) + (y ? ` (${y[1]})` : ''); } },
-    experience:{ kind: 'section', path: '_data/cv.yml', section: 'Experience', start: /^      - /gm, label: b => [firstVal(b, 'position'), firstVal(b, 'company')].filter(Boolean).join(' — ') + (firstVal(b, 'start_date') ? ` · ${firstVal(b, 'start_date')}` : '') },
-    education: { kind: 'section', path: '_data/cv.yml', section: 'Education', start: /^      - /gm, label: b => [firstVal(b, 'studyType'), firstVal(b, 'institution')].filter(Boolean).join(' — ') + (firstVal(b, 'start_date') ? ` · ${firstVal(b, 'start_date')}` : '') },
-  };
-  // Split `text` into [head, blocks[]] where each block starts at a `start` match. For sections, only the
-  // region between "    <Section>:" and the next 4-space-indented key is considered.
-  function splitBlocks(src, text) {
-    let from = 0, to = text.length;
-    if (src.kind === 'section') {
-      const m = text.match(new RegExp(`^    ${src.section}:[ \\t]*\\n`, 'm'));
-      if (!m) throw new Error(`No "${src.section}:" section found in ${src.path}.`);
-      from = m.index + m[0].length;
-      const rest = text.slice(from);
-      const next = rest.match(/^    [A-Za-z]/m);
-      to = next ? from + next.index : text.length;
-    }
-    const region = text.slice(from, to);
-    const starts = []; let mm; const re = new RegExp(src.start.source, 'gm');
-    while ((mm = re.exec(region)) !== null) { starts.push(mm.index); if (mm.index === re.lastIndex) re.lastIndex++; }
-    const blocks = starts.map((st, i) => { const en = i + 1 < starts.length ? starts[i + 1] : region.length; return { from: from + st, to: from + en, text: region.slice(st, en) }; });
-    return blocks;
-  }
-  let mItems = [], mEditing = null;
-  function renderList(items) {
-    $('m-list').innerHTML = items.length ? items.map((it, i) => `<div style="display:flex;gap:.5rem;align-items:center;padding:.45rem 0;border-top:1px solid var(--line);font-size:.9rem"><span style="flex:1">${esc(it.label)}</span><button class="secondary" data-edit="${i}">Edit</button><button class="secondary" data-del="${i}" style="color:var(--bad)">Delete</button></div>`).join('') : '<p class="hint">Nothing here yet.</p>';
-  }
-  async function loadItems() {
-    const src = sources[$('m-kind').value];
-    if (src.kind === 'files') {
-      const d = await gh(`contents/${src.dir}?ref=${S.branch}`, { allow404: true });
-      mItems = (d || []).filter(f => f.type === 'file' && /\.md$/.test(f.name)).map(f => ({ label: f.name.replace(/\.md$/, ''), path: f.path, sha: f.sha }));
-    } else {
-      const f = await getFile(src.path); if (!f) throw new Error(`${src.path} not found.`);
-      mItems = splitBlocks(src, f.text).map(b => ({ label: src.label(b.text) || '(untitled)', text: b.text }));
-    }
-    renderList(mItems); $('m-editor').style.display = 'none'; mEditing = null;
-  }
-  $('m-load').addEventListener('click', (e) => run('m-msg', e.target, async () => { await loadItems(); $('m-msg').style.display = 'none'; }));
-  $('m-list').addEventListener('click', (e) => {
-    const b = e.target.closest('button'); if (!b) return;
-    const src = sources[$('m-kind').value];
-    if (b.dataset.edit !== undefined) {
-      const it = mItems[+b.dataset.edit];
-      run('m-msg', b, async () => {
-        if (src.kind === 'files') { const f = await getFile(it.path); if (!f) throw new Error('File vanished — reload the list.'); it.sha = f.sha; $('m-text').value = f.text; }
-        else $('m-text').value = it.text.replace(/\s*$/, '');
-        mEditing = it; $('m-what').textContent = `Editing: ${it.label}`; $('m-editor').style.display = ''; $('m-msg').style.display = 'none';
-        $('m-text').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      });
-    } else if (b.dataset.del !== undefined) {
-      const it = mItems[+b.dataset.del];
-      if (!confirm(`Delete "${it.label}"? This makes a commit removing it.`)) return;
-      run('m-msg', b, async () => {
-        const url = await removeItem(src, it);
-        done('m-msg', url, `"${it.label}"`); await loadItems();
-      });
-    }
-  });
-  // Re-read the file at save/delete time so a stale list can't clobber a newer edit; locate the block by label.
-  async function locate(src, it) {
-    const f = await getFile(src.path); if (!f) throw new Error(`${src.path} not found.`);
-    const blocks = splitBlocks(src, f.text);
-    const nth = mItems.slice(0, mItems.indexOf(it)).filter(x => x.label === it.label).length;
-    const b = blocks.filter(x => (src.label(x.text) || '(untitled)') === it.label)[nth];
-    if (!b) throw new Error('That item changed since the list was loaded — reload the list and try again.');
-    return { f, b };
-  }
-  async function removeItem(src, it) {
-    if (src.kind === 'files') {
-      const d = await gh(`contents/${encodeURI(it.path)}`, { method: 'DELETE', body: JSON.stringify({ message: `Delete ${it.path}`, sha: it.sha, branch: S.branch }), headers: { 'Content-Type': 'application/json' } });
-      return d.commit && d.commit.html_url;
-    }
-    const { f, b } = await locate(src, it);
-    const text = (f.text.slice(0, b.from) + f.text.slice(b.to)).replace(/\n{3,}/g, '\n\n');
-    return putFile(src.path, b64utf8(text), `Delete "${it.label.slice(0, 60)}" from ${src.path}`, f.sha);
-  }
-  $('m-save').addEventListener('click', (e) => run('m-msg', e.target, async () => {
-    if (!mEditing) throw new Error('Nothing is being edited.');
-    const src = sources[$('m-kind').value]; const it = mEditing; const newText = $('m-text').value;
-    let url;
-    if (src.kind === 'files') {
-      url = await putFile(it.path, b64utf8(newText), `Edit ${it.path}`, it.sha);
-    } else {
-      if (!newText.trim()) throw new Error('Use Delete to remove an item; the text can\'t be empty.');
-      const { f, b } = await locate(src, it);
-      const text = f.text.slice(0, b.from) + newText.replace(/\s*$/, '') + '\n\n' + f.text.slice(b.to).replace(/^\s*\n/, '');
-      url = await putFile(src.path, b64utf8(text.replace(/\n{3,}/g, '\n\n')), `Edit "${it.label.slice(0, 60)}" in ${src.path}`, f.sha);
-    }
-    done('m-msg', url, `"${it.label}"`); await loadItems();
+  // ---------- setup ----------
+  $('s-save').addEventListener('click', (e) => run(e.target, async () => {
+    S.owner = need($('s-owner').value, 'GitHub user'); S.repo = need($('s-repo').value, 'Repository'); S.token = need($('s-token').value, 'Token');
+    const d = await gh(''); if (!d.permissions || !d.permissions.push) throw new Error('Token works but has no write access — give it Contents: Read and write.');
+    saveSettings(); $('lnk-repo').href = `https://github.com/${S.owner}/${S.repo}`; setPill('conn', 'ok', `connected · ${d.full_name}`); actionsOK = true; toast('ok', `Connected to ${esc(d.full_name)}.`); showTab('overview');
   }));
-  $('m-cancel').addEventListener('click', () => { $('m-editor').style.display = 'none'; mEditing = null; });
-
-  // Attach an image to the item being edited: upload it to the folder for this kind, then set the matching field.
-  const imgPlan = {
-    experience: { dir: 'assets/img/logos', name: t => firstVal(t, 'company'), apply: (t, p) => setYamlField(t, 'logo', p, '        ') },
-    education:  { dir: 'assets/img/logos', name: t => firstVal(t, 'institution'), apply: (t, p) => setYamlField(t, 'logo', p, '        ') },
-    people:     { dir: 'assets/img/people', name: t => firstVal(t, 'name'), apply: (t, p) => setYamlField(t, 'image', p, '  ') },
-    projects:   { dir: 'assets/img/projects', name: t => firstVal(t, 'title'), apply: (t, p) => { const cur = firstVal(t, 'img'); const withImg = cur ? t : setYamlField(t, 'img', p, ''); return withImg.includes(p) && cur ? withImg : withImg.replace(/\s*$/, '') + '\n\n' + figureBlock(p, ''); } },
-    papers:     { dir: 'assets/img/publication_preview', name: t => (t.match(/^@\w+\{([^,]+),/) || [])[1], apply: (t, p) => setBibField(t, 'preview', p.split('/').pop()) },
-    news:       { dir: 'assets/img/news', name: () => 'news-' + Date.now(), apply: (t, p) => t.replace(/\s*$/, '') + `\n\n![](/${p})\n` },
-    teaching:   { dir: 'assets/img/teaching', name: t => firstVal(t, 'title'), apply: (t, p) => t.replace(/\s*$/, '') + `\n\n![](/${p})\n` },
-  };
-  function setYamlField(text, key, value, indent) {
-    const line = `${indent}${key}: ${yq(value)}`;
-    const re = new RegExp(`^${indent}${key}:.*$`, 'm');
-    if (re.test(text)) return text.replace(re, line);
-    const lines = text.split('\n');
-    if (/^---\s*$/.test(lines[0])) { lines.splice(1, 0, line); return lines.join('\n'); } // front matter: after opening ---
-    lines.splice(1, 0, line); return lines.join('\n'); // YAML block: after the "- first:" line
-  }
-  function setBibField(text, key, value) {
-    const re = new RegExp(`^\\s*${key}\\s*=\\s*\\{[^}]*\\},?\\s*$`, 'm');
-    const line = `  ${key.padEnd(11)} = {${value}},`;
-    if (re.test(text)) return text.replace(re, line);
-    const i = text.lastIndexOf('}');
-    return text.slice(0, i).replace(/\s*$/, '') + '\n' + line + '\n}' + text.slice(i + 1);
-  }
-  $('m-img-up').addEventListener('click', (e) => run('m-msg', e.target, async () => {
-    if (!mEditing) throw new Error('Open an item with Edit first.');
-    const file = $('m-img').files[0]; if (!file) throw new Error('Choose an image first.');
-    if (file.size > 5 * 1024 * 1024) throw new Error('Image is larger than 5 MB — please resize it.');
-    const plan = imgPlan[$('m-kind').value];
-    const ext = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/svg+xml': 'svg', 'image/webp': 'webp' }[file.type] || 'png';
-    const path = `${plan.dir}/${slug(plan.name($('m-text').value) || mEditing.label)}.${ext}`;
-    const existing = await getFile(path).catch(() => null);
-    const url = await putFile(path, await fileToB64(file), `Image: ${path}`, existing && existing.sha);
-    $('m-text').value = plan.apply($('m-text').value, path);
-    $('m-img').value = '';
-    msg('m-msg', 'ok', `Uploaded ${esc(path)}${url ? ` (<a href="${esc(url)}" target="_blank">commit</a>)` : ''} and filled it in above. Click <b>Save changes</b> to apply it to the item.`);
-  }));
-
-  // ---------- build tab ----------
-  const permHint = ' This needs the token to have <b>Actions: Read and write</b> (see the note below the buttons).';
-  async function listRuns() {
-    const d = await gh('actions/runs?per_page=6').catch(e => { throw new Error(e.message + permHint); });
-    const rows = (d.workflow_runs || []).map(r => {
-      const state = r.status === 'completed' ? (r.conclusion === 'success' ? '✅ success' : '❌ ' + (r.conclusion || 'failed')) : '⏳ ' + r.status.replace('_', ' ');
-      const when = new Date(r.created_at).toLocaleString();
-      return `<div style="padding:.4rem 0;border-top:1px solid var(--line);font-size:.9rem">${state} · ${esc(r.display_title || r.name)} · <span style="color:var(--muted)">${esc(when)}</span> · <a href="${esc(r.html_url)}" target="_blank">log ↗</a></div>`;
-    });
-    $('b-list').innerHTML = rows.join('') || '<p class="hint">No builds yet.</p>';
-    const latest = d.workflow_runs && d.workflow_runs[0];
-    if (latest && latest.status !== 'completed') setTimeout(() => { if ($('tab-build').classList.contains('active')) listRuns().catch(() => {}); }, 20000);
-  }
-  $('b-refresh').addEventListener('click', (e) => run('b-msg', e.target, async () => { await listRuns(); $('b-msg').style.display = 'none'; }));
-  $('b-run').addEventListener('click', (e) => run('b-msg', e.target, async () => {
-    try {
-      await gh('actions/workflows/deploy.yml/dispatches', { method: 'POST', body: JSON.stringify({ ref: S.branch }), headers: { 'Content-Type': 'application/json' } });
-    } catch (err) { throw new Error(err.message + permHint); }
-    msg('b-msg', 'ok', 'Build started. It takes about 3 minutes; the list below refreshes on its own.');
-    setTimeout(() => listRuns().catch(() => {}), 4000);
-  }));
-  tabs.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.dataset.tab === 'build' && S.token) listRuns().catch(err => msg('b-msg', 'bad', esc(err.message) + permHint)); });
+  $('s-forget').addEventListener('click', () => { S.token = ''; $('s-token').value = ''; saveSettings(); setPill('conn', 'bad', 'not connected'); toast('info', 'Token removed from this browser.'); });
+  async function checkConn() { if (!S.token) { setPill('conn', 'bad', 'not connected'); return false; } try { const d = await gh(''); setPill('conn', d.permissions && d.permissions.push ? 'ok' : 'bad', `connected · ${d.full_name}`); return true; } catch (e) { setPill('conn', 'bad', 'token rejected'); return false; } }
 
   // ---------- init ----------
   loadSettings();
-  $('n-date').value = today(); $('p-year').value = new Date().getFullYear(); $('t-year').value = new Date().getFullYear();
-  let tab = 'setup'; try { tab = localStorage.getItem(LS_KEY + ':tab') || 'setup'; } catch (e) {}
-  showTab(S.token ? tab : 'setup');
-  checkConn();
+  Object.keys(KINDS).forEach(renderKind);
+  let tab = 'overview'; try { tab = localStorage.getItem(LS + ':tab') || 'overview'; } catch (e) {}
+  if (!S.token) showTab('setup'); else { checkConn().then(ok => { showTab(ok ? tab : 'setup'); if (ok) checkBuild(); }); }
 })();
 </script>
 </body>
