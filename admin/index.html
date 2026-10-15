@@ -338,10 +338,17 @@
   // ---------- GitHub API ----------
   async function gh(path, opts = {}) {
     if (!S.token) throw new Error('Not connected — open the Setup tab and save a token.');
-    const res = await fetch(`https://api.github.com/repos/${S.owner}/${S.repo}/${path}`, {
-      ...opts,
-      headers: { Authorization: 'Bearer ' + S.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(opts.headers || {}) },
-    });
+    const base = `https://api.github.com/repos/${encodeURIComponent(S.owner)}/${encodeURIComponent(S.repo)}`;
+    let res;
+    try {
+      res = await fetch(path ? `${base}/${path}` : base, {
+        method: opts.method || 'GET',
+        body: opts.body,
+        headers: { Authorization: 'Bearer ' + S.token, Accept: 'application/vnd.github+json', ...(opts.headers || {}) },
+      });
+    } catch (e) {
+      throw new Error('Could not reach api.github.com from this browser (network error). Check for an ad blocker or privacy extension blocking the request, or try another browser.');
+    }
     if (res.status === 404 && opts.allow404) return null;
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(`GitHub ${res.status}: ${data.message || 'request failed'}`);
