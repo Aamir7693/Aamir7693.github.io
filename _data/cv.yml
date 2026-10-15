@@ -20,8 +20,8 @@ cv:
   sections:
     Education:
       - institution: University of Maryland, Baltimore County (UMBC)
-        abbr: UMBC # shown on the home-page timeline until a logo is uploaded
-        logo: "assets/img/logos/university-of-maryland-baltimore-county-umbc.svg"
+        abbr: UMBC
+        logo: "assets/img/logos/umbc.svg"
         location: Baltimore, MD
         url: https://www.csee.umbc.edu/
         area: Computer Science
@@ -32,10 +32,11 @@ cv:
         highlights:
           - "Advisor: Prof. Roberto Yus"
 
-      - institution: Your Previous University # <- fill in, then remove the placeholder line
-        logo: "assets/img/logos/your-previous-university-fill-in-then-remove-the-placeholder.png"
-        placeholder: true # hides this entry from the home-page timeline until it is real
-        location: City, Country
+      - institution: University of Kashmir
+        abbr: KU
+        logo: "assets/img/logos/university-of-kashmir.png"
+        location: Srinagar, India
+        url: https://www.kashmiruniversity.net/
         area: Computer Science
         studyType: MS
         start_date: "2017"
@@ -86,7 +87,7 @@ cv:
 
       - company: "DAMS Lab (Prof. Roberto Yus), UMBC"
         abbr: "UMBC"
-        logo: "assets/img/logos/dams-lab-prof-roberto-yus-umbc.png"
+        logo: "assets/img/logos/dams-lab.png"
         position: "Graduate Research Assistant"
         summary: "Privacy-preserving data management and LLM-based privacy assistants; lead author of GenAIPABench (PETS 2024)."
         location: "Baltimore, MD"

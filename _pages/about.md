@@ -10,10 +10,10 @@ profile:
   image_circular: true # crops the image to make it circular
   more_info: >
     <div class="aff-card">
-      <a href="https://www.csee.umbc.edu/" class="aff-logo"><img src="/assets/img/logos/umbc.png" alt="UMBC" onerror="this.parentNode.style.display='none'"></a>
-      <p><i class="fa-solid fa-flask"></i> <a href="https://umbc.edu/academics/faculty/roberto-yus/">DAMS Lab</a></p>
-      <p><i class="fa-solid fa-building-columns"></i> <a href="https://www.csee.umbc.edu/">CSEE, UMBC</a></p>
-      <p><i class="fa-solid fa-location-dot"></i> Baltimore, MD</p>
+      <a href="https://www.csee.umbc.edu/" class="aff-logo" title="UMBC"><img src="/assets/img/logos/umbc.svg" alt="UMBC" onerror="this.parentNode.style.display='none'"></a>
+      <p class="aff-line"><i class="fa-solid fa-flask"></i> <a href="https://umbc.edu/academics/faculty/roberto-yus/">DAMS Lab</a></p>
+      <p class="aff-line"><i class="fa-solid fa-building-columns"></i> <a href="https://www.csee.umbc.edu/">Computer Science &amp; Electrical Engineering, UMBC</a></p>
+      <p class="aff-line"><i class="fa-solid fa-location-dot"></i> Baltimore, Maryland</p>
     </div>
 
 selected_papers: true # shows papers marked selected={true} in papers.bib

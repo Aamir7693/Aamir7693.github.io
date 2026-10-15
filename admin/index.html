@@ -642,7 +642,7 @@
   }));
 
   // ---------- manage tab ----------
-  const firstVal = (block, key) => { const m = block.match(new RegExp('^\\s*-?\\s*' + key + ':\\s*(.*)$', 'm')); return m ? m[1].replace(/^"(.*)"$/, '$1').trim() : ''; };
+  const firstVal = (block, key) => { const m = block.match(new RegExp('^\\s*-?\\s*' + key + ':\\s*(.*)$', 'm')); if (!m) return ''; let v = m[1].trim(); if (!/^"/.test(v)) v = v.replace(/\s+#.*$/, ''); return v.replace(/^"(.*)"$/, '$1').trim(); };
   const sources = {
     news:      { kind: 'files', dir: '_news' },
     projects:  { kind: 'files', dir: '_projects' },
