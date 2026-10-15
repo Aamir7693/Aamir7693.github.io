@@ -50,6 +50,32 @@ cv:
           - "Deployed models for interactive inference via a Streamlit app with top-K action prediction, and merged the LoRA adapter with the extended vocabulary into a single GGUF for CPU/llama.cpp serving."
           - "Mined 163.8M telemetry events across 137K sessions into transition-probability workflow graphs, uncovering high-retention paths, drop-off points, and transition networks over 4,000 application events for large-scale process mining and behavioral analysis."
 
+      - company: "AMD"
+        logo: "assets/img/logos/amd.png"
+        position: "Data Scientist Intern"
+        location: "Austin, Texas"
+        url: "https://www.amd.com/"
+        start_date: "2025-05"
+        end_date: "2025-08"
+        highlights:
+          - "Built an agentic RMA analytics system (Smol Agents + Snowflake Cortex) to automate trend analysis and root-cause slicing over manufacturing data."
+          - "Productized a Snowflake semantic layer across 15+ curated tables (metrics, joins, row-level access), enabling Cortex Analyst NLQ and reducing recurring turnaround by 85%."
+          - "Developed a Cortex-based log triage pipeline to extract and summarize errors; optimized prompts to reduce token spend while maintaining extraction quality."
+          - "Deployed production Streamlit applications for KPI exploration and AI-assisted insights used by leadership stakeholders."
+          - "Standardized GenAI workflows using an internal evaluation process (safety/PII/latency), improving iteration speed across 20+ team members."
+
+      - company: "AMD"
+        logo: "assets/img/logos/amd.png"
+        position: "Data Scientist Intern"
+        location: "Austin, Texas"
+        url: "https://www.amd.com/"
+        start_date: "2024-02"
+        end_date: "2024-08"
+        highlights:
+          - "Improved supply-chain forecasting accuracy by 15% via feature engineering, validation design, and model iteration on historical operational signals."
+          - "Eliminated redundant features and remediated data leakage in training/validation pipelines to improve deployment reliability."
+          - "Engineered automated batch scoring pipelines (Dataiku → Snowflake) enabling monitoring of predictions and model health."
+
       - company: Prof. Roberto Yus's group, UMBC
         logo: assets/img/logos/umbc.png
         position: Graduate Research Assistant
@@ -59,14 +85,6 @@ cv:
         highlights:
           - One-line description of a project and its outcome.
           - Another one-line description.
-
-      - company: Company or Lab
-        position: Research Intern
-        location: City, State
-        start_date: 2023-06
-        end_date: 2023-08
-        highlights:
-          - What you built or found, in one line.
 
     Awards:
       - title: Example Fellowship or Award
