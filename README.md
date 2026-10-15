@@ -10,7 +10,7 @@ Every push to `main` rebuilds and redeploys the site automatically (see `.github
 | Change your bio / photo          | `_pages/about.md`, `assets/img/aamir-headshot.jpg`               |
 | Add or edit a paper              | `_bibliography/papers.bib` (one BibTeX entry per paper)    |
 | Post a news item                 | add a file to `_news/` (copy an existing one)              |
-| Update your CV                   | replace `assets/pdf/cv.pdf`; optionally `_data/cv.yml`     |
+| Update your CV                   | `_data/cv.yml` (site + auto-generated PDF); or upload your own `assets/pdf/cv.pdf`, which switches the generator off |
 | Add a project card               | add a file to `_projects/` (copy `1_example_project.md`)   |
 | Add a course to /teaching/       | add a file to `_teachings/` (copy `example-course.md`)     |
 | Add a mentor / collaborator      | `_data/people.yml` (photo optional, under `assets/img/people/`) |
