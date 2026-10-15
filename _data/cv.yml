@@ -33,12 +33,13 @@ cv:
           - "Advisor: Prof. Roberto Yus"
 
       - institution: Your Previous University # <- fill in, then remove the placeholder line
+        logo: "assets/img/logos/your-previous-university-fill-in-then-remove-the-placeholder.png"
         placeholder: true # hides this entry from the home-page timeline until it is real
         location: City, Country
         area: Computer Science
-        studyType: BSc
-        start_date: "2019"
-        end_date: "2023"
+        studyType: MS
+        start_date: "2017"
+        end_date: "2020"
 
     Experience:
       - company: "ESRI"
