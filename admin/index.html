@@ -273,7 +273,7 @@
     <div class="actions"><button class="primary" id="f-cv-up">Upload CV</button></div>
     <div class="msg" id="f-cv-msg"></div>
 
-    <label>Profile photo (JPG, square) → <code>assets/img/prof_pic.jpg</code></label>
+    <label>Profile photo (JPG, square) → <code>assets/img/aamir.jpg</code></label>
     <input type="file" id="f-pic" accept="image/jpeg">
     <div class="actions"><button class="primary" id="f-pic-up">Upload photo</button></div>
     <div class="msg" id="f-pic-msg"></div>
@@ -619,7 +619,7 @@
     });
   }
   $('f-cv-up').addEventListener('click', (e) => upload('f-cv', 'assets/pdf/cv.pdf', 'f-cv-msg', e.target));
-  $('f-pic-up').addEventListener('click', (e) => upload('f-pic', 'assets/img/prof_pic.jpg', 'f-pic-msg', e.target));
+  $('f-pic-up').addEventListener('click', (e) => upload('f-pic', 'assets/img/aamir.jpg', 'f-pic-msg', e.target));
   $('f-any-up').addEventListener('click', (e) => {
     const p = $('f-any-path').value.trim().replace(/^\/+/, '');
     if (!p || p.includes('..')) { msg('f-any-msg', 'bad', 'Enter a path inside the repo, e.g. assets/img/logos/umbc.png'); return; }
