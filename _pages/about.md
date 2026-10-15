@@ -9,9 +9,12 @@ profile:
   image: aamir-headshot.jpg
   image_circular: true # crops the image to make it circular
   more_info: >
-    <p>DAMS Lab · Dept. of Computer Science and Electrical Engineering</p>
-    <p>University of Maryland, Baltimore County</p>
-    <p>Baltimore, MD</p>
+    <div class="aff-card">
+      <a href="https://www.csee.umbc.edu/" class="aff-logo"><img src="/assets/img/logos/umbc.png" alt="UMBC" onerror="this.parentNode.style.display='none'"></a>
+      <p><i class="fa-solid fa-flask"></i> <a href="https://umbc.edu/academics/faculty/roberto-yus/">DAMS Lab</a></p>
+      <p><i class="fa-solid fa-building-columns"></i> <a href="https://www.csee.umbc.edu/">CSEE, UMBC</a></p>
+      <p><i class="fa-solid fa-location-dot"></i> Baltimore, MD</p>
+    </div>
 
 selected_papers: true # shows papers marked selected={true} in papers.bib
 social: true # social icons from _data/socials.yml at the bottom of the page
