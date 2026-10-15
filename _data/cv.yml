@@ -85,7 +85,7 @@ cv:
 
       - company: "DAMS Lab (Prof. Roberto Yus), UMBC"
         abbr: "UMBC"
-        logo: "assets/img/logos/umbc.png"
+        logo: "assets/img/logos/dams-lab-prof-roberto-yus-umbc.png"
         position: "Graduate Research Assistant"
         summary: "Privacy-preserving data management and LLM-based privacy assistants; lead author of GenAIPABench (PETS 2024)."
         location: "Baltimore, MD"
